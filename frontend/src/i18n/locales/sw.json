@@ -1,0 +1,125 @@
+{
+  "app": {
+    "title": "BT-SmartDry",
+    "subtitle": "Mfumo wa Uangalizi na Ushauri wa Vikaushio vya Jua",
+    "tagline": "Kuwezesha vituo vya wanawake wakulima kwa kukausha kisasa kwa jua"
+  },
+  "nav": {
+    "activeBatches": "Mizigo Inayokaushwa",
+    "history": "Historia ya Mizigo",
+    "hubOverview": "Vituo vya Kukausha",
+    "analytics": "Takwimu",
+    "login": "Ingia",
+    "logout": "Toka",
+    "operator": "Mhudumu",
+    "admin": "Msimamizi"
+  },
+  "auth": {
+    "title": "Ingia Katika Kituo Chako",
+    "subtitle": "Chagua akaunti ya haraka au weka taarifa zako",
+    "username": "Jina la Mtumiaji",
+    "password": "Nenosiri",
+    "signIn": "Ingia",
+    "signingIn": "Inaingia...",
+    "invalidCredentials": "Jina la mtumiaji au nenosiri si sahihi.",
+    "quickPresets": "Akaunti za Majaribio ya Haraka",
+    "operatorMeru": "Mhudumu wa Meru",
+    "operatorTharaka": "Mhudumu wa Tharaka Nithi",
+    "operatorEldoret": "Mhudumu wa Eldoret",
+    "administrator": "Msimamizi Mkuu"
+  },
+  "crops": {
+    "moringa": "Moringa (Mlonge)",
+    "hibiscus": "Hibiscus (Karkadeh)",
+    "prunus": "Prunus (Mkomahole)"
+  },
+  "grades": {
+    "export": "Daraja la Usafirishaji Nje (Export)",
+    "standard": "Daraja la Kawaida (Standard)",
+    "downgraded": "Daraja la Chini (Downgraded)"
+  },
+  "status": {
+    "active": "Inakaushwa",
+    "completed": "Imekamilika"
+  },
+  "batches": {
+    "title": "Mizigo Inayokaushwa Sasa",
+    "subtitle": "Vipimo vya moja kwa moja, ubashiri wa AI, na maelekezo kwa Kiswahili",
+    "createNew": "+ Pakia Mzigo Mpya",
+    "hubFilter": "Chuja kwa Kituo",
+    "allHubs": "Vituo Vyote",
+    "noActive": "Hakuna mzigo unaokaushwa kwenye kituo hiki kwa sasa.",
+    "batchId": "Nambari ya Mzigo",
+    "crop": "Aina ya Zao",
+    "initialWeight": "Uzito wa Awali",
+    "currentMoisture": "Unyevu wa Sasa",
+    "targetMoisture": "Unyevu Unaolengwa",
+    "remainingTime": "Muda Uliobaki (Masaa)",
+    "predictedGrade": "Daraja la Ubora Linalotabiriwa",
+    "elapsedTime": "Muda Uliopita",
+    "actions": "Vitendo",
+    "viewDetails": "Tazama Maelezo",
+    "completeBatch": "Kamilisha Mzigo",
+    "confirmComplete": "Una uhakika unataka kukamilisha mzigo huu? Hii inathibitisha kuwa zao limetolewa kwenye kikaushio.",
+    "completing": "Inakamilisha..."
+  },
+  "modal": {
+    "createTitle": "Sajili Mzigo Mpya wa Kukausha",
+    "cropType": "Aina ya Zao",
+    "weightKg": "Uzito wa Zao (kg)",
+    "hub": "Eneo la Kituo",
+    "targetMoisturePct": "Unyevu Unaolengwa (%) - hiari",
+    "cancel": "Ghairi",
+    "submit": "Anza Kukausha",
+    "submitting": "Inasajili...",
+    "capacityNotice": "Nafasi iliyobaki katika kikaushio cha kituo hiki: kg {{available}} / 200 kg.",
+    "capacityError": "Uzito wa mzigo unazidi uwezo uliosalia wa kikaushio!"
+  },
+  "detail": {
+    "back": "← Rudi kwenye Mizigo",
+    "telemetryChart": "Grafu ya Vipimo vya Vihisi",
+    "moistureTrend": "Mteremko wa Unyevu (%)",
+    "tempTrend": "Joto la Kikaushio (°C)",
+    "rhTrend": "Unyevu wa Hewa Kikaushioni (%)",
+    "vpdTrend": "Upungufu wa Shinikizo la Mvuke (VPD kPa)",
+    "ambientConditions": "Hali ya Hewa ya Nje",
+    "advisoryTitle": "Ushauri wa Kitendo kwa Mhudumu",
+    "mlPredictions": "Utabiri wa Akili Bandia (AI)",
+    "sensorStatus": "Vipimo vya Vihisi Moja kwa Moja",
+    "lastUpdated": "Ilisasishwa sekunde {{seconds}} zilizopita"
+  },
+  "hubs": {
+    "title": "Muhtasari wa Vituo vya Kukausha",
+    "subtitle": "Ufuatiliaji wa uzito katika vituo 3 vya kanda (Kikomo cha kilo 200 kwa kikaushio)",
+    "meru": "Kituo cha Meru",
+    "tharaka_nithi": "Kituo cha Tharaka Nithi",
+    "eldoret": "Kituo cha Eldoret",
+    "capacityUsed": "Uwezo Uliotumika",
+    "kgLoaded": "Kilo {{loaded}} / 200 Zimepakiwa",
+    "activeBatchCount": "Mizigo {{count}} Inayokaushwa",
+    "dryerStatus": "Hali ya Kikaushio",
+    "normal": "Inafanya Kazi Vizuri",
+    "full": "Kimejaa Kikamilifu"
+  },
+  "history": {
+    "title": "Historia ya Mizigo Iliyokamilika",
+    "subtitle": "Kumbukumbu za mizigo iliyokaushwa na daraja la ubora lililothibitishwa",
+    "totalCompleted": "Jumla Iliyokamilika: {{count}}",
+    "filterGrade": "Chuja kwa Daraja la Ubora",
+    "allGrades": "Madaraja Yote",
+    "dateCompleted": "Tarehe ya Kukamilika",
+    "finalGrade": "Daraja la Mwisho",
+    "noHistory": "Bado hakuna mizigo iliyokamilika."
+  },
+  "analytics": {
+    "title": "Takwimu za Mfumo na Ubora wa Mazao",
+    "subtitle": "Ufanisi wa kukausha kwa jua na mgawanyo wa madaraja ya mazao",
+    "totalBatches": "Jumla ya Mizigo Iliyokaushwa",
+    "totalWeight": "Jumla ya Uzito Uliokaushwa",
+    "exportRate": "Kiwango cha Daraja la Usafirishaji Nje",
+    "gradeDistribution": "Mgawanyo wa Madaraja ya Ubora",
+    "cropBreakdown": "Mgawanyo wa Uzito kwa Mazao",
+    "hubPerformance": "Ulinganisho wa Vituo vya Kukausha"
+  }
+}
+

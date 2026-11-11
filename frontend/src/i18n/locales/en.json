@@ -1,0 +1,125 @@
+{
+  "app": {
+    "title": "BT-SmartDry",
+    "subtitle": "IoT Solar Dryer Monitoring & Advisory",
+    "tagline": "Empowering women-led agricultural hubs with smart solar drying"
+  },
+  "nav": {
+    "activeBatches": "Active Batches",
+    "history": "Batch History",
+    "hubOverview": "Hubs",
+    "analytics": "Analytics",
+    "login": "Login",
+    "logout": "Logout",
+    "operator": "Operator",
+    "admin": "Admin"
+  },
+  "auth": {
+    "title": "Sign In to Your Hub",
+    "subtitle": "Select a quick preset or enter your credentials",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "invalidCredentials": "Invalid username or password.",
+    "quickPresets": "Quick Demo Accounts",
+    "operatorMeru": "Meru Operator",
+    "operatorTharaka": "Tharaka Nithi Operator",
+    "operatorEldoret": "Eldoret Operator",
+    "administrator": "System Administrator"
+  },
+  "crops": {
+    "moringa": "Moringa Oleifera",
+    "hibiscus": "Hibiscus Sabdariffa",
+    "prunus": "Prunus Africana"
+  },
+  "grades": {
+    "export": "Export Grade",
+    "standard": "Standard Grade",
+    "downgraded": "Downgraded"
+  },
+  "status": {
+    "active": "Drying Active",
+    "completed": "Completed"
+  },
+  "batches": {
+    "title": "Active Drying Batches",
+    "subtitle": "Live telemetry, real-time predictions, and bilingual instructions",
+    "createNew": "+ New Batch",
+    "hubFilter": "Filter by Hub",
+    "allHubs": "All Hubs",
+    "noActive": "No active batches currently drying in this hub.",
+    "batchId": "Batch ID",
+    "crop": "Crop Type",
+    "initialWeight": "Initial Weight",
+    "currentMoisture": "Current Moisture",
+    "targetMoisture": "Target Moisture",
+    "remainingTime": "Estimated Remaining Time",
+    "predictedGrade": "Predicted Quality Grade",
+    "elapsedTime": "Elapsed Time",
+    "actions": "Actions",
+    "viewDetails": "View Live Details",
+    "completeBatch": "Complete Batch",
+    "confirmComplete": "Are you sure you want to mark this batch as completed? This confirms crop removal from the solar dryer.",
+    "completing": "Completing..."
+  },
+  "modal": {
+    "createTitle": "Register New Drying Batch",
+    "cropType": "Crop Variety",
+    "weightKg": "Harvest Weight (kg)",
+    "hub": "Hub Location",
+    "targetMoisturePct": "Target Moisture (%) - optional",
+    "cancel": "Cancel",
+    "submit": "Start Drying Cycle",
+    "submitting": "Creating...",
+    "capacityNotice": "Available dryer capacity in this hub: {{available}} kg / 200 kg.",
+    "capacityError": "Batch weight exceeds available dryer capacity!"
+  },
+  "detail": {
+    "back": "← Back to Batches",
+    "telemetryChart": "Real-Time Sensor Telemetry",
+    "moistureTrend": "Moisture Decay (%)",
+    "tempTrend": "Dryer Temperature (°C)",
+    "rhTrend": "Dryer Relative Humidity (%)",
+    "vpdTrend": "VPD (kPa)",
+    "ambientConditions": "Exterior Ambient Weather",
+    "advisoryTitle": "Operator Action Advisory",
+    "mlPredictions": "AI Predictive Telemetry",
+    "sensorStatus": "Live Sensor Readings",
+    "lastUpdated": "Updated {{seconds}}s ago"
+  },
+  "hubs": {
+    "title": "Dryer Hubs Overview",
+    "subtitle": "Multi-batch capacity tracking across 3 regional solar dryers (200 kg limit per dryer)",
+    "meru": "Meru Hub",
+    "tharaka_nithi": "Tharaka Nithi Hub",
+    "eldoret": "Eldoret Hub",
+    "capacityUsed": "Capacity Utilization",
+    "kgLoaded": "{{loaded}} / 200 kg Loaded",
+    "activeBatchCount": "{{count}} Active Batches",
+    "dryerStatus": "Dryer Status",
+    "normal": "Operating Normally",
+    "full": "At Full Capacity"
+  },
+  "history": {
+    "title": "Completed Drying History",
+    "subtitle": "Archived batches with certified final quality grades",
+    "totalCompleted": "Total Completed: {{count}}",
+    "filterGrade": "Filter by Grade",
+    "allGrades": "All Grades",
+    "dateCompleted": "Completed At",
+    "finalGrade": "Final Grade",
+    "noHistory": "No completed batches recorded yet."
+  },
+  "analytics": {
+    "title": "System Analytics & Quality Performance",
+    "subtitle": "Regional solar drying efficiency and crop grade distribution",
+    "totalBatches": "Total Batches Processed",
+    "totalWeight": "Total Dried Weight",
+    "exportRate": "Export Quality Rate",
+    "gradeDistribution": "Quality Grade Breakdown",
+    "cropBreakdown": "Crop Volume Distribution",
+    "hubPerformance": "Hub Drying Comparisons"
+  }
+}
+

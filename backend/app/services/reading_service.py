@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.batch import Batch
+from app.models.hub import Hub
 from app.models.reading import Reading
 from app.models.user import User
 from app.schemas.reading import ReadingCreate, ReadingResponse
@@ -13,6 +14,7 @@ from app.schemas.alert import AlertType
 from app.schemas.batch import BatchStatus, QualityGrade
 from app.services.advisory_service import generate_advisory
 from app.services.alert_service import trigger_alert_if_needed
+from app.services.ml_service import get_ml_service
 
 
 async def add_reading(
@@ -46,19 +48,35 @@ async def add_reading(
     )
     db.add(reading)
 
-    # 3. Predict / Estimate Remaining Hours & Grade (Fallback or in-memory ML)
-    # Check if ML engine is available, else physics heuristic
-    remaining_hours = max(0.0, (reading.current_moisture - batch.target_moisture_pct) * 1.5)
+    # 3. Predict / Estimate Remaining Hours & Grade (via Embedded ML Service)
+    hub = await db.get(Hub, batch.hub_id)
+    hub_location = hub.location.lower() if hub else "meru"
+    
+    t_reading = reading.timestamp.replace(tzinfo=timezone.utc) if reading.timestamp.tzinfo is None else reading.timestamp
+    t_start = batch.start_time.replace(tzinfo=timezone.utc) if batch.start_time.tzinfo is None else batch.start_time
+    elapsed_seconds = max(0.0, (t_reading - t_start).total_seconds())
+    elapsed_hours = round(elapsed_seconds / 3600.0, 4)
+
+    ml_features = {
+        "temperature": reading.temperature,
+        "humidity": reading.humidity,
+        "vpd": reading.vpd,
+        "current_moisture": reading.current_moisture,
+        "batch_weight": batch.initial_weight_kg,
+        "elapsed_hours": elapsed_hours,
+        "ambient_temperature": reading.ambient_temperature,
+        "ambient_humidity": reading.ambient_humidity,
+        "crop_type": batch.crop_type.lower(),
+        "hub_location": hub_location,
+    }
+
+    ml_service = get_ml_service()
+    remaining_hours, predicted_grade = ml_service.predict(
+        ml_features,
+        fallback_target_moisture=batch.target_moisture_pct
+    )
     hours = int(remaining_hours)
     mins = int((remaining_hours - hours) * 60)
-    
-    # Over-drying penalty check per ADR-0002 & context.md
-    if reading.current_moisture < (batch.target_moisture_pct - 2.5):
-        predicted_grade = QualityGrade.DOWNGRADED
-    elif reading.current_moisture <= (batch.target_moisture_pct + 1.0):
-        predicted_grade = QualityGrade.EXPORT
-    else:
-        predicted_grade = QualityGrade.STANDARD
 
     batch.predicted_remaining_hours = round(remaining_hours, 2)
     batch.predicted_quality_grade = predicted_grade.value
