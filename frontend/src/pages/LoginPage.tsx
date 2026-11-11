@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Sun, Lock, User, Globe, AlertCircle } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -50,23 +52,25 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-amber-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-background to-amber-50/40 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Top language toggle */}
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={toggleLanguage}
-          className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 shadow-sm"
+          className="bg-card text-foreground shadow-2xs"
         >
           <Globe className="w-4 h-4 mr-1.5 text-brand-600" />
           {i18n.language === 'en' ? 'English (EN)' : 'Kiswahili (SW)'}
-        </button>
+        </Button>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-solar-500 flex items-center justify-center text-white shadow-lg">
           <Sun className="w-10 h-10" />
         </div>
-        <h2 className="mt-4 text-center text-3xl font-extrabold tracking-tight text-gray-900">
+        <h2 className="mt-4 text-center text-3xl font-extrabold tracking-tight text-foreground">
           {t('app.title')}
         </h2>
         <p className="mt-1 text-center text-sm font-medium text-brand-700">
@@ -75,101 +79,107 @@ export const LoginPage: React.FC = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            {error && (
-              <div className="rounded-md bg-red-50 p-4 border border-red-200 flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <p className="text-sm font-medium text-red-800">{error}</p>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">
-                {t('auth.username')}
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <User className="w-5 h-5" />
+        <Card className="shadow-xl rounded-2xl border-border">
+          <CardContent className="py-8 px-6 sm:px-10">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {error && (
+                <div className="rounded-lg bg-destructive/10 p-3.5 border border-destructive/20 flex items-start space-x-3">
+                  <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <p className="text-sm font-medium text-destructive">{error}</p>
                 </div>
-                <input
-                  type="text"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm"
-                  placeholder="e.g. operator_meru"
-                />
-              </div>
-            </div>
+              )}
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700">
-                {t('auth.password')}
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <Lock className="w-5 h-5" />
+              <div>
+                <label className="block text-sm font-semibold text-foreground">
+                  {t('auth.username')}
+                </label>
+                <div className="mt-1 relative rounded-md shadow-2xs">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-2.5 border border-input rounded-lg bg-background focus:ring-2 focus:ring-brand-500 text-sm"
+                    placeholder="e.g. operator_meru"
+                  />
                 </div>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm"
-                  placeholder="••••••••"
-                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-foreground">
+                  {t('auth.password')}
+                </label>
+                <div className="mt-1 relative rounded-md shadow-2xs">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
+                    <Lock className="w-5 h-5" />
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-2.5 border border-input rounded-lg bg-background focus:ring-2 focus:ring-brand-500 text-sm"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                variant="brand"
+                className="w-full h-11 text-sm font-semibold"
+              >
+                {loading ? t('auth.signingIn') : t('auth.signIn')}
+              </Button>
+            </form>
+
+            {/* Quick preset account shortcuts */}
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-center mb-3">
+                {t('auth.quickPresets')}
+              </p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleQuickLogin('operator_meru', 'operatorpassword123')}
+                  className="h-auto p-2.5 border-emerald-200 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-100 font-medium justify-start"
+                >
+                  🌾 Meru Hub
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleQuickLogin('operator_tharaka', 'operatorpassword123')}
+                  className="h-auto p-2.5 border-emerald-200 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-100 font-medium justify-start"
+                >
+                  🌺 Tharaka Nithi
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleQuickLogin('operator_eldoret', 'operatorpassword123')}
+                  className="h-auto p-2.5 border-emerald-200 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-100 font-medium justify-start"
+                >
+                  🌳 Eldoret Hub
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleQuickLogin('admin', 'adminpassword123')}
+                  className="h-auto p-2.5 border-purple-200 bg-purple-50/60 text-purple-800 hover:bg-purple-100 font-medium justify-start"
+                >
+                  ⚡ Administrator
+                </Button>
               </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors disabled:opacity-50"
-            >
-              {loading ? t('auth.signingIn') : t('auth.signIn')}
-            </button>
-          </form>
-
-          {/* Quick preset account shortcuts */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-500 text-center mb-3">
-              {t('auth.quickPresets')}
-            </p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('operator_meru', 'operatorpassword123')}
-                className="p-2 border border-emerald-200 bg-emerald-50 text-emerald-800 rounded-md hover:bg-emerald-100 font-medium text-left transition-colors"
-              >
-                🌾 Meru Hub
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('operator_tharaka', 'operatorpassword123')}
-                className="p-2 border border-emerald-200 bg-emerald-50 text-emerald-800 rounded-md hover:bg-emerald-100 font-medium text-left transition-colors"
-              >
-                🌺 Tharaka Nithi
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('operator_eldoret', 'operatorpassword123')}
-                className="p-2 border border-emerald-200 bg-emerald-50 text-emerald-800 rounded-md hover:bg-emerald-100 font-medium text-left transition-colors"
-              >
-                🌳 Eldoret Hub
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin', 'adminpassword123')}
-                className="p-2 border border-purple-200 bg-purple-50 text-purple-800 rounded-md hover:bg-purple-100 font-medium text-left transition-colors"
-              >
-                ⚡ Administrator
-              </button>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 };
-

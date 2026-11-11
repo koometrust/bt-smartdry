@@ -7,6 +7,10 @@ import { api } from '../api/client';
 import { PredictionBadge } from '../components/PredictionBadge';
 import { CapacityMeter } from '../components/CapacityMeter';
 import { CreateBatchModal } from '../components/CreateBatchModal';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import {
   Layers,
   Plus,
@@ -81,95 +85,93 @@ export const ActiveBatchesPage: React.FC = () => {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center">
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center">
             <Layers className="w-6 h-6 mr-2.5 text-brand-600" />
             {t('batches.title')}
           </h1>
-          <p className="mt-1 text-sm text-gray-600">{t('batches.subtitle')}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t('batches.subtitle')}</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-2.5">
-          <button
+          <Button
+            variant="outline"
+            size="icon"
             onClick={() => refetch()}
-            className="p-2 text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg shadow-2xs hover:bg-gray-50 transition-colors"
             title="Refresh now"
           >
             <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin text-brand-600' : ''}`} />
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="brand"
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-xs transition-colors"
           >
             <Plus className="w-4 h-4 mr-1.5" />
             {t('batches.createNew')}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Admin Hub Filter Tabs */}
       {isAdmin && hubs.length > 0 && (
-        <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 border-b border-gray-200">
-          <button
+        <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 border-b border-border">
+          <Button
+            variant={selectedHubId === '' ? 'brand' : 'outline'}
+            size="sm"
             onClick={() => setSelectedHubId('')}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors whitespace-nowrap ${
-              selectedHubId === ''
-                ? 'bg-brand-600 text-white shadow-xs'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-            }`}
           >
             {t('batches.allHubs')}
-          </button>
+          </Button>
           {hubs.map((hub) => (
-            <button
+            <Button
               key={hub.id}
+              variant={selectedHubId === hub.id ? 'brand' : 'outline'}
+              size="sm"
               onClick={() => setSelectedHubId(hub.id)}
-              className={`flex items-center px-3 py-1.5 text-xs font-bold rounded-lg transition-colors whitespace-nowrap ${
-                selectedHubId === hub.id
-                  ? 'bg-brand-600 text-white shadow-xs'
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-              }`}
             >
               <Building2 className="w-3.5 h-3.5 mr-1" />
               {hub.name}
-            </button>
+            </Button>
           ))}
         </div>
       )}
 
       {/* Hub Dryer Capacity Meter banner (per ADR-0002) */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-2xs">
-        <div className="sm:flex sm:items-center sm:justify-between mb-2">
-          <div className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-            Dryer Capacity Utilization (200 kg Max)
+      <Card>
+        <CardContent className="p-4">
+          <div className="sm:flex sm:items-center sm:justify-between mb-2">
+            <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Dryer Capacity Utilization (200 kg Max)
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {batches.length} active batch{batches.length !== 1 ? 'es' : ''} currently drying
+            </div>
           </div>
-          <div className="text-xs text-gray-500">
-            {batches.length} active batch{batches.length !== 1 ? 'es' : ''} currently drying
-          </div>
-        </div>
-        <CapacityMeter currentWeightKg={currentLoadedWeight} maxCapacityKg={200} />
-      </div>
+          <CapacityMeter currentWeightKg={currentLoadedWeight} maxCapacityKg={200} />
+        </CardContent>
+      </Card>
 
       {/* Batches Grid */}
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-2xl border border-gray-200 p-6 h-64 animate-pulse" />
+            <Card key={i} className="h-64 animate-pulse" />
           ))}
         </div>
       ) : batches.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center">
-          <Layers className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-gray-900">{t('batches.noActive')}</h3>
-          <p className="mt-1 text-sm text-gray-500">
+        <Card className="border-dashed p-12 text-center">
+          <Layers className="w-12 h-12 text-muted mx-auto mb-3" />
+          <h3 className="text-base font-bold text-foreground">{t('batches.noActive')}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
             Click &quot;New Batch&quot; or start the simulator to feed real-time drying data.
           </p>
-          <button
+          <Button
+            variant="brand"
             onClick={() => setModalOpen(true)}
-            className="mt-4 inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-brand-600 rounded-lg hover:bg-brand-700 shadow-xs"
+            className="mt-4 inline-flex"
           >
             <Plus className="w-4 h-4 mr-1.5" />
             {t('batches.createNew')}
-          </button>
-        </div>
+          </Button>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {batches.map((batch) => {
@@ -191,34 +193,37 @@ export const ActiveBatchesPage: React.FC = () => {
             );
 
             return (
-              <div
+              <Card
                 key={batch.id}
-                className="bg-white rounded-2xl border border-gray-200 p-5 shadow-2xs hover:shadow-md transition-shadow flex flex-col justify-between"
+                className="hover:shadow-md transition-shadow flex flex-col justify-between"
               >
-                <div>
-                  {/* Top: Hub & Crop */}
-                  <div className="flex justify-between items-start mb-3">
+                <CardHeader className="p-5 pb-3">
+                  <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded">
+                      <Badge variant="secondary" className="mb-1 text-brand-700 bg-brand-50">
                         {hub?.name || 'Solar Dryer'}
-                      </span>
-                      <h3 className="text-lg font-bold text-gray-900 mt-1">{cropName}</h3>
+                      </Badge>
+                      <CardTitle className="text-lg font-bold text-foreground mt-1">
+                        {cropName}
+                      </CardTitle>
                     </div>
                     <PredictionBadge grade={batch.predicted_quality_grade} size="sm" />
                   </div>
+                </CardHeader>
 
+                <CardContent className="p-5 pt-0">
                   {/* Weight and moisture metric row */}
-                  <div className="grid grid-cols-2 gap-2 my-3 p-3 bg-gray-50 rounded-xl text-center">
+                  <div className="grid grid-cols-2 gap-2 my-3 p-3 bg-muted/50 rounded-xl text-center">
                     <div>
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                         {t('batches.initialWeight')}
                       </span>
-                      <span className="text-base font-extrabold text-gray-900">
+                      <span className="text-base font-extrabold text-foreground">
                         {batch.initial_weight_kg} kg
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                         {t('batches.currentMoisture')}
                       </span>
                       <span className="text-base font-extrabold text-blue-600 flex items-center justify-center">
@@ -232,52 +237,53 @@ export const ActiveBatchesPage: React.FC = () => {
 
                   {/* Moisture Progress Bar */}
                   <div className="mb-4">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1 font-medium">
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1.5 font-medium">
                       <span>Drying Progress</span>
                       <span>Target: {targetM}%</span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-brand-600 h-full rounded-full transition-all duration-300"
-                        style={{ width: `${moistureProgress}%` }}
-                      />
-                    </div>
+                    <Progress value={moistureProgress} indicatorClassName="bg-brand-600" />
                   </div>
 
                   {/* Estimated remaining drying time countdown */}
-                  <div className="flex items-center justify-between text-xs text-gray-700 py-2 border-t border-gray-100">
-                    <span className="flex items-center text-gray-600">
-                      <Clock className="w-3.5 h-3.5 mr-1 text-gray-400" />
+                  <div className="flex items-center justify-between text-xs text-muted-foreground py-2 border-t border-border">
+                    <span className="flex items-center">
+                      <Clock className="w-3.5 h-3.5 mr-1" />
                       {t('batches.remainingTime')}:
                     </span>
-                    <span className="font-extrabold text-gray-900">
+                    <span className="font-extrabold text-foreground">
                       {remHours > 0 ? `${h}h ${m}m` : 'Target reached'}
                     </span>
                   </div>
-                </div>
 
-                {/* Bottom action buttons */}
-                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center space-x-2">
-                  <Link
-                    to={`/batches/${batch.id}`}
-                    className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
-                  >
-                    {t('batches.viewDetails')}
-                    <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </Link>
-                  <button
-                    onClick={() => {
-                      if (window.confirm(t('batches.confirmComplete'))) {
-                        completeMutation.mutate(batch.id);
-                      }
-                    }}
-                    className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                    title={t('batches.completeBatch')}
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+                  {/* Bottom action buttons */}
+                  <div className="mt-4 pt-3 border-t border-border flex items-center space-x-2">
+                    <Button
+                      asChild
+                      variant="secondary"
+                      size="sm"
+                      className="flex-1 font-bold text-brand-700 bg-brand-50 hover:bg-brand-100"
+                    >
+                      <Link to={`/batches/${batch.id}`}>
+                        {t('batches.viewDetails')}
+                        <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        if (window.confirm(t('batches.confirmComplete'))) {
+                          completeMutation.mutate(batch.id);
+                        }
+                      }}
+                      title={t('batches.completeBatch')}
+                      className="text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50"
+                    >
+                      <CheckCircle className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
@@ -297,4 +303,3 @@ export const ActiveBatchesPage: React.FC = () => {
     </div>
   );
 };
-

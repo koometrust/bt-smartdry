@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { QualityGrade } from '../types';
+import { Badge } from '@/components/ui/badge';
 import { Award, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface PredictionBadgeProps {
@@ -13,45 +14,41 @@ export const PredictionBadge: React.FC<PredictionBadgeProps> = ({ grade, size = 
 
   if (!grade) {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+      <Badge variant="outline" className="text-gray-500 font-normal">
         Pending reading
-      </span>
+      </Badge>
     );
   }
 
   const normalized = grade.toLowerCase();
-
-  let colorClasses = 'bg-gray-100 text-gray-800 border-gray-200';
+  let variant: 'export' | 'standard' | 'downgraded' = 'standard';
   let Icon = CheckCircle;
   let labelKey = 'grades.standard';
 
   if (normalized === 'export') {
-    colorClasses = 'bg-emerald-50 text-emerald-800 border-emerald-300 ring-1 ring-emerald-500/20';
+    variant = 'export';
     Icon = Award;
     labelKey = 'grades.export';
   } else if (normalized === 'standard') {
-    colorClasses = 'bg-blue-50 text-blue-800 border-blue-300 ring-1 ring-blue-500/20';
+    variant = 'standard';
     Icon = CheckCircle;
     labelKey = 'grades.standard';
   } else if (normalized === 'downgraded') {
-    colorClasses = 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-500/20';
+    variant = 'downgraded';
     Icon = AlertTriangle;
     labelKey = 'grades.downgraded';
   }
 
   const sizeClasses = {
     sm: 'text-xs px-2 py-0.5',
-    md: 'text-xs sm:text-sm px-2.5 py-1',
-    lg: 'text-sm sm:text-base px-3 py-1.5 font-bold',
+    md: 'text-xs px-2.5 py-1',
+    lg: 'text-sm px-3 py-1.5 font-bold',
   }[size];
 
   return (
-    <span
-      className={`inline-flex items-center font-semibold rounded-full border shadow-sm ${colorClasses} ${sizeClasses}`}
-    >
+    <Badge variant={variant} className={`font-semibold shadow-2xs ${sizeClasses}`}>
       <Icon className="w-3.5 h-3.5 mr-1.5 flex-shrink-0" />
       {t(labelKey)}
-    </span>
+    </Badge>
   );
 };
-
