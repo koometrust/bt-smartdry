@@ -1,0 +1,10 @@
+{
+  "advisories": {
+    "normal_drying": "Mzigo unakaushwa kawaida. Makadirio ya muda uliosalia: saa {{hours}} na dakika {{mins}}. Daraja linalotarajiwa: {{grade}}.",
+    "near_completion": "Onyo: Mzigo unakaribia kiwango cha unyevu kinacholengwa ({{moisture}}%). Jitayarishe kuutoa baada ya takriban dakika {{mins}} ili kuzuia kukauka kupita kiasi.",
+    "completed": "Kiwango cha unyevu kinacholengwa kimefikiwa ({{moisture}}%). Toa mzigo sasa hivi kwenye kikaushio ili kuhifadhi ubora wa {{grade}}.",
+    "anomaly_overheating": "Tahadhari: Joto jingi limegunduliwa ({{temp}}°C). Fungua nafasi za uingizaji hewa mara moja ili kuzuia kuharibu mazao.",
+    "anomaly_high_humidity": "Tahadhari: Unyevu wa juu ({{humidity}}%). Angalia mtiririko wa hewa na vizuizi vya joto."
+  }
+}
+

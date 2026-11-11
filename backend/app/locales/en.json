@@ -1,0 +1,10 @@
+{
+  "advisories": {
+    "normal_drying": "Batch drying normally. Predicted remaining time: {{hours}}h {{mins}}m. Expected grade: {{grade}}.",
+    "near_completion": "Attention: Batch nearing target moisture ({{moisture}}%). Prepare for unloading in ~{{mins}} minutes to prevent over-drying.",
+    "completed": "Target moisture reached ({{moisture}}%). Remove batch immediately from dryer to preserve {{grade}} quality.",
+    "anomaly_overheating": "Warning: High temperature detected ({{temp}}°C). Open ventilation vents immediately to avoid crop scorching.",
+    "anomaly_high_humidity": "Warning: High humidity ({{humidity}}%). Check airflow and solar collector dampers."
+  }
+}
+
