@@ -45,11 +45,35 @@ async def seed_data():
         users_data = [
             {
                 "username": "admin",
-                "password": "AdminPass123!",
+                "password": "adminpassword123",
                 "role": "admin",
                 "hub_id": None,
                 "preferred_language": "en",
                 "phone_number": "+254700000001"
+            },
+            {
+                "username": "operator_meru",
+                "password": "operatorpassword123",
+                "role": "operator",
+                "hub_id": hubs_by_name["Meru"].id,
+                "preferred_language": "en",
+                "phone_number": "+254711000001"
+            },
+            {
+                "username": "operator_tharaka",
+                "password": "operatorpassword123",
+                "role": "operator",
+                "hub_id": hubs_by_name["Tharaka Nithi"].id,
+                "preferred_language": "sw",
+                "phone_number": "+254711000002"
+            },
+            {
+                "username": "operator_eldoret",
+                "password": "operatorpassword123",
+                "role": "operator",
+                "hub_id": hubs_by_name["Eldoret"].id,
+                "preferred_language": "en",
+                "phone_number": "+254711000003"
             },
             {
                 "username": "op_meru",
