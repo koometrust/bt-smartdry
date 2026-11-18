@@ -12,7 +12,8 @@
     "login": "Ingia",
     "logout": "Toka",
     "operator": "Mhudumu",
-    "admin": "Msimamizi"
+    "admin": "Msimamizi Mkuu",
+    "allHubs": "Vituo Vyote"
   },
   "auth": {
     "title": "Ingia Katika Kituo Chako",
@@ -72,8 +73,10 @@
     "cancel": "Ghairi",
     "submit": "Anza Kukausha",
     "submitting": "Inasajili...",
-    "capacityNotice": "Nafasi iliyobaki katika kikaushio cha kituo hiki: kg {{available}} / 200 kg.",
-    "capacityError": "Uzito wa mzigo unazidi uwezo uliosalia wa kikaushio!"
+    "capacityNotice": "Nafasi iliyobaki katika kikaushio cha {{hubName}}: kg {{available}} / 200 kg.",
+    "capacityError": "Uzito wa mzigo unazidi uwezo uliosalia wa kikaushio!",
+    "enterValidWeight": "Tafadhali weka uzito halali wa mazao yaliyovunwa.",
+    "exceedsCapacity": "Uzito wa mzigo (kg {{weight}}) unazidi nafasi iliyobaki (kg {{available}}) ya kikaushio hiki cha kilo 200!"
   },
   "detail": {
     "back": "← Rudi kwenye Mizigo",
@@ -86,11 +89,17 @@
     "advisoryTitle": "Ushauri wa Kitendo kwa Mhudumu",
     "mlPredictions": "Utabiri wa Akili Bandia (AI)",
     "sensorStatus": "Vipimo vya Vihisi Moja kwa Moja",
-    "lastUpdated": "Ilisasishwa sekunde {{seconds}} zilizopita"
+    "lastUpdated": "Ilisasishwa sekunde {{seconds}} zilizopita",
+    "dryerTemp": "Joto la Kikaushio",
+    "dryerHumidity": "Unyevu wa Hewa Kikaushioni",
+    "vpd": "Upungufu wa Shinikizo (VPD)",
+    "ambientTemp": "Joto la Nje",
+    "ambientHumidity": "Unyevu wa Nje",
+    "currentMoisture": "Unyevu wa Mazao Sasa"
   },
   "hubs": {
     "title": "Muhtasari wa Vituo vya Kukausha",
-    "subtitle": "Ufuatiliaji wa uzito katika vituo 3 vya kanda (Kikomo cha kilo 200 kwa kikaushio)",
+    "subtitle": "Ufuatiliaji wa uzito katika vituo 3 vya kanda (Uwezo wa kilo 200 kwa kikaushio)",
     "meru": "Kituo cha Meru",
     "tharaka_nithi": "Kituo cha Tharaka Nithi",
     "eldoret": "Kituo cha Eldoret",
@@ -107,19 +116,35 @@
     "totalCompleted": "Jumla Iliyokamilika: {{count}}",
     "filterGrade": "Chuja kwa Daraja la Ubora",
     "allGrades": "Madaraja Yote",
+    "filterCrop": "Chuja kwa Zao",
+    "allCrops": "Mazao Yote",
+    "filterHub": "Chuja kwa Kituo",
+    "allHubs": "Vituo Vyote",
+    "searchPlaceholder": "Tafuta kwa nambari ya mzigo, zao, au kituo...",
     "dateCompleted": "Tarehe ya Kukamilika",
+    "startTime": "Muda wa Kuanza",
+    "duration": "Muda Uliotumika",
+    "hub": "Eneo la Kituo",
     "finalGrade": "Daraja la Mwisho",
     "noHistory": "Bado hakuna mizigo iliyokamilika."
   },
   "analytics": {
     "title": "Takwimu za Mfumo na Ubora wa Mazao",
     "subtitle": "Ufanisi wa kukausha kwa jua na mgawanyo wa madaraja ya mazao",
-    "totalBatches": "Jumla ya Mizigo Iliyokaushwa",
-    "totalWeight": "Jumla ya Uzito Uliokaushwa",
-    "exportRate": "Kiwango cha Daraja la Usafirishaji Nje",
+    "totalBatches": "Jumla ya Mizigo",
+    "completedCycles": "Mizigo {{count}} iliyokamilika",
+    "totalWeight": "Jumla ya Uzito",
+    "acrossHubs": "Kwenye vituo 3 vya kanda",
+    "exportRate": "Kiwango cha Daraja la Export",
+    "optimalRange": "Kiwango bora cha unyevu wa kukausha",
+    "dryerCapacity": "Uwezo wa Kikaushio",
+    "perDryer": "Kilo 200 kwa kikaushio (ADR-0002)",
     "gradeDistribution": "Mgawanyo wa Madaraja ya Ubora",
     "cropBreakdown": "Mgawanyo wa Uzito kwa Mazao",
-    "hubPerformance": "Ulinganisho wa Vituo vya Kukausha"
+    "hubPerformance": "Ulinganisho wa Vituo vya Kukausha",
+    "hub": "Eneo la Kituo",
+    "batchesCount": "Mizigo",
+    "weightKg": "Uzito Uliokaushwa",
+    "activeLoad": "Mzigo wa Kikaushio Sasa"
   }
 }
-

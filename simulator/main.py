@@ -27,8 +27,10 @@ logger = logging.getLogger("simulator")
 
 BACKEND_URL = os.getenv("SIMULATOR_BACKEND_URL", "http://localhost:8000")
 INTERVAL_SECONDS = float(os.getenv("SIMULATOR_INTERVAL_SECONDS", "5.0"))
-# Virtual speedup: each tick represents dt_hours of drying physics (default 0.5 hours per tick)
+# Virtual speedup: each tick represents dt_hours of drying physics (default 0.35 hours per tick)
 VIRTUAL_HOURS_PER_TICK = float(os.getenv("SIMULATOR_VIRTUAL_HOURS_PER_TICK", "0.35"))
+SIMULATOR_USERNAME = os.getenv("SIMULATOR_USERNAME", "admin")
+SIMULATOR_PASSWORD = os.getenv("SIMULATOR_PASSWORD", "adminpassword123")
 
 DEMO_PROFILES = [
     {
@@ -74,19 +76,19 @@ class TelemetrySimulator:
         self.batch_state: Dict[str, dict] = {}
 
     def login(self) -> bool:
-        """Authenticate using default admin credentials to manage multi-hub batches."""
+        """Authenticate using seed credentials to stream multi-hub telemetry."""
         try:
             res = self.client.post(
                 "/api/v1/auth/login",
-                data={"username": "admin", "password": "adminpassword123"}
+                data={"username": SIMULATOR_USERNAME, "password": SIMULATOR_PASSWORD}
             )
             if res.status_code == 200:
                 self.token = res.json()["access_token"]
                 self.client.headers.update({"Authorization": f"Bearer {self.token}"})
-                logger.info("Simulator authenticated successfully as admin.")
+                logger.info(f"Simulator authenticated successfully as '{SIMULATOR_USERNAME}'.")
                 return True
             else:
-                logger.error(f"Authentication failed: {res.status_code} - {res.text}")
+                logger.error(f"Authentication failed for '{SIMULATOR_USERNAME}': {res.status_code} - {res.text}")
                 return False
         except Exception as e:
             logger.warning(f"Could not connect to backend at {self.backend_url}: {e}")
@@ -225,14 +227,14 @@ class TelemetrySimulator:
             except Exception as e:
                 logger.error(f"Error posting reading for batch {batch_id}: {e}")
 
-            # 3. If moisture target reached (or over-dried), complete batch
+            # 3. Log progress when moisture target reached (or over-dried)
+            # Per docs/context.md: Transition to completed is an explicit operator action.
+            # Allowing moisture to decay below target allows over-drying and alerts to fire.
             if new_m <= target_m:
-                logger.info(f"Batch {batch_id[:8]} reached target moisture {target_m}% (actual: {new_m}%). Completing batch...")
-                try:
-                    self.client.patch(f"/api/v1/batches/{batch_id}", json={"status": "completed"})
-                    del self.batch_state[batch_id]
-                except Exception as e:
-                    logger.warning(f"Failed to complete batch {batch_id}: {e}")
+                logger.info(
+                    f"Batch {batch_id[:8]} reached/passed target moisture {target_m}% "
+                    f"(actual: {new_m}%). Awaiting operator removal confirmation in dashboard."
+                )
 
 
 def run_simulator():

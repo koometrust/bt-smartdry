@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hub } from '../types';
+import { Batch, CreateBatchDTO, Hub } from '../types';
 import {
   Dialog,
   DialogContent,
@@ -13,15 +13,10 @@ import { Scale, AlertCircle, Plus } from 'lucide-react';
 interface CreateBatchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    hub_id: string;
-    crop_type: string;
-    initial_weight_kg: number;
-    target_moisture_pct?: number;
-  }) => Promise<void>;
+  onSubmit: (data: CreateBatchDTO) => Promise<void>;
   hubs: Hub[];
   defaultHubId?: string;
-  currentLoadedWeight: number;
+  activeBatches: Batch[];
 }
 
 export const CreateBatchModal: React.FC<CreateBatchModalProps> = ({
@@ -30,7 +25,7 @@ export const CreateBatchModal: React.FC<CreateBatchModalProps> = ({
   onSubmit,
   hubs,
   defaultHubId,
-  currentLoadedWeight,
+  activeBatches,
 }) => {
   const { t } = useTranslation();
   const [hubId, setHubId] = useState(defaultHubId || (hubs[0]?.id ?? ''));
@@ -40,8 +35,25 @@ export const CreateBatchModal: React.FC<CreateBatchModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Keep hubId synced if defaultHubId changes and no manual selection made
+  React.useEffect(() => {
+    if (defaultHubId) {
+      setHubId(defaultHubId);
+    } else if (hubs.length > 0 && !hubId) {
+      setHubId(hubs[0].id);
+    }
+  }, [defaultHubId, hubs]);
+
+  // Per ADR-0002: 200 kg capacity per regional solar dryer
   const maxCapacity = 200;
-  const availableWeight = Math.max(0, maxCapacity - currentLoadedWeight);
+  const currentHubLoadedWeight = useMemo(() => {
+    return activeBatches
+      .filter((b) => b.hub_id === hubId && b.status === 'active')
+      .reduce((acc, b) => acc + (b.initial_weight_kg || 0), 0);
+  }, [activeBatches, hubId]);
+
+  const availableWeight = Math.max(0, maxCapacity - currentHubLoadedWeight);
+  const selectedHub = hubs.find((h) => h.id === hubId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,13 +61,16 @@ export const CreateBatchModal: React.FC<CreateBatchModalProps> = ({
 
     const weight = Number(weightKg);
     if (!weight || weight <= 0) {
-      setError('Please enter a valid harvest weight.');
+      setError(t('modal.enterValidWeight'));
       return;
     }
 
     if (weight > availableWeight) {
       setError(
-        `Batch weight (${weight} kg) exceeds available capacity (${availableWeight} kg) of this 200 kg solar dryer!`
+        t('modal.exceedsCapacity', {
+          weight,
+          available: availableWeight,
+        })
       );
       return;
     }
@@ -160,7 +175,10 @@ export const CreateBatchModal: React.FC<CreateBatchModalProps> = ({
               placeholder="e.g. 45"
             />
             <p className="mt-1 text-[11px] text-muted-foreground">
-              {t('modal.capacityNotice', { available: availableWeight })}
+              {t('modal.capacityNotice', {
+                hubName: selectedHub?.name || 'this dryer',
+                available: availableWeight,
+              })}
             </p>
           </div>
 

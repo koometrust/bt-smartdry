@@ -4,6 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../api/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   BarChart3,
   Award,
@@ -15,6 +24,12 @@ import {
 
 export const AnalyticsPage: React.FC = () => {
   const { t } = useTranslation();
+
+  // Load hubs
+  const { data: hubs = [] } = useQuery({
+    queryKey: ['hubs'],
+    queryFn: () => api.getHubs(),
+  });
 
   // Load all batches (completed and active)
   const { data: allBatches = [], isLoading } = useQuery({
@@ -55,6 +70,29 @@ export const AnalyticsPage: React.FC = () => {
     cropCounts[c].weight += b.initial_weight_kg || 0;
   });
 
+  // Comparative Hub Performance
+  const hubStats = hubs.map((hub) => {
+    const hubBatches = allBatches.filter((b) => b.hub_id === hub.id);
+    const completed = hubBatches.filter((b) => b.status === 'completed');
+    const active = hubBatches.filter((b) => b.status === 'active');
+    const totalWeight = hubBatches.reduce((acc, b) => acc + (b.initial_weight_kg || 0), 0);
+    const activeWeight = active.reduce((acc, b) => acc + (b.initial_weight_kg || 0), 0);
+    const hubExport = hubBatches.filter(
+      (b) => (b.final_quality_grade || b.predicted_quality_grade) === 'export'
+    ).length;
+    const exportRate = hubBatches.length > 0 ? Math.round((hubExport / hubBatches.length) * 100) : 0;
+
+    return {
+      hub,
+      totalBatches: hubBatches.length,
+      completedBatches: completed.length,
+      activeBatches: active.length,
+      totalWeight,
+      activeWeight,
+      exportRate,
+    };
+  });
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -76,14 +114,16 @@ export const AnalyticsPage: React.FC = () => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Total Batches
+                    {t('analytics.totalBatches')}
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center">
                     <Layers className="w-4 h-4" />
                   </div>
                 </div>
                 <p className="mt-3 text-3xl font-black text-foreground">{totalBatches}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{completedBatches.length} completed cycles</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t('analytics.completedCycles', { count: completedBatches.length })}
+                </p>
               </CardContent>
             </Card>
 
@@ -91,14 +131,14 @@ export const AnalyticsPage: React.FC = () => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Total Weight
+                    {t('analytics.totalWeight')}
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
                     <Scale className="w-4 h-4" />
                   </div>
                 </div>
                 <p className="mt-3 text-3xl font-black text-foreground">{totalWeightKg.toLocaleString()} kg</p>
-                <p className="mt-1 text-xs text-muted-foreground">Across 3 regional hubs</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('analytics.acrossHubs')}</p>
               </CardContent>
             </Card>
 
@@ -106,14 +146,14 @@ export const AnalyticsPage: React.FC = () => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Export Quality Rate
+                    {t('analytics.exportRate')}
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
                     <Award className="w-4 h-4" />
                   </div>
                 </div>
                 <p className="mt-3 text-3xl font-black text-emerald-600">{exportRatePct}%</p>
-                <p className="mt-1 text-xs text-emerald-700 font-medium">Optimal solar moisture range</p>
+                <p className="mt-1 text-xs text-emerald-700 font-medium">{t('analytics.optimalRange')}</p>
               </CardContent>
             </Card>
 
@@ -121,14 +161,14 @@ export const AnalyticsPage: React.FC = () => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Dryer Capacity Limit
+                    {t('analytics.dryerCapacity')}
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
                     <Building2 className="w-4 h-4" />
                   </div>
                 </div>
                 <p className="mt-3 text-3xl font-black text-foreground">200 kg</p>
-                <p className="mt-1 text-xs text-muted-foreground">Max per hub per ADR-0002</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('analytics.perDryer')}</p>
               </CardContent>
             </Card>
           </div>
@@ -148,7 +188,7 @@ export const AnalyticsPage: React.FC = () => {
                 {/* Export */}
                 <div>
                   <div className="flex justify-between text-xs font-bold mb-1.5">
-                    <span className="text-emerald-800">Export Grade (Highest Premium)</span>
+                    <span className="text-emerald-800">{t('grades.export')}</span>
                     <span className="text-emerald-900">
                       {exportCount} ({totalBatches > 0 ? Math.round((exportCount / totalBatches) * 100) : 0}%)
                     </span>
@@ -163,7 +203,7 @@ export const AnalyticsPage: React.FC = () => {
                 {/* Standard */}
                 <div>
                   <div className="flex justify-between text-xs font-bold mb-1.5">
-                    <span className="text-blue-800">Standard Grade</span>
+                    <span className="text-blue-800">{t('grades.standard')}</span>
                     <span className="text-blue-900">
                       {standardCount} ({totalBatches > 0 ? Math.round((standardCount / totalBatches) * 100) : 0}%)
                     </span>
@@ -178,7 +218,7 @@ export const AnalyticsPage: React.FC = () => {
                 {/* Downgraded */}
                 <div>
                   <div className="flex justify-between text-xs font-bold mb-1.5">
-                    <span className="text-amber-800">Downgraded (Over/Under dried)</span>
+                    <span className="text-amber-800">{t('grades.downgraded')}</span>
                     <span className="text-amber-900">
                       {downgradedCount} ({totalBatches > 0 ? Math.round((downgradedCount / totalBatches) * 100) : 0}%)
                     </span>
@@ -221,6 +261,71 @@ export const AnalyticsPage: React.FC = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Comparative Hub Performance (per Spec) */}
+          <Card>
+            <CardHeader className="p-6 pb-3">
+              <CardTitle className="text-base font-bold text-foreground flex items-center">
+                <Building2 className="w-4 h-4 mr-2 text-brand-600" />
+                {t('analytics.hubPerformance')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 pt-0 overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('analytics.hub')}</TableHead>
+                    <TableHead>{t('analytics.batchesCount')}</TableHead>
+                    <TableHead>{t('analytics.weightKg')}</TableHead>
+                    <TableHead>{t('analytics.exportRate')}</TableHead>
+                    <TableHead>{t('analytics.activeLoad')} (200 kg)</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {hubStats.map((item) => (
+                    <TableRow key={item.hub.id}>
+                      <TableCell className="font-bold text-foreground">
+                        <div className="flex items-center space-x-1.5">
+                          <Building2 className="w-3.5 h-3.5 text-brand-600" />
+                          <span>{item.hub.name}</span>
+                        </div>
+                        <span className="text-[11px] text-muted-foreground">{item.hub.location}</span>
+                      </TableCell>
+                      <TableCell className="font-medium text-foreground">
+                        {item.totalBatches} ({item.activeBatches} active)
+                      </TableCell>
+                      <TableCell className="font-semibold text-foreground">
+                        {item.totalWeight} kg
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="secondary"
+                          className={
+                            item.exportRate >= 80
+                              ? 'bg-emerald-50 text-emerald-700 font-bold'
+                              : 'bg-blue-50 text-blue-700 font-bold'
+                          }
+                        >
+                          {item.exportRate}% Export
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="w-48">
+                        <div className="flex justify-between text-xs mb-1 font-semibold">
+                          <span>{item.activeWeight} kg</span>
+                          <span className="text-muted-foreground">{Math.round((item.activeWeight / 200) * 100)}%</span>
+                        </div>
+                        <Progress
+                          value={(item.activeWeight / 200) * 100}
+                          indicatorClassName={item.activeWeight >= 180 ? 'bg-amber-500' : 'bg-brand-600'}
+                          className="h-2"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>

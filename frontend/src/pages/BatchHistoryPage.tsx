@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api/client';
 import { PredictionBadge } from '../components/PredictionBadge';
+import { formatBatchDuration } from '../utils/formatters';
 import {
   Table,
   TableBody,
@@ -14,12 +15,20 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { History, Filter, ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { History, Filter, ArrowRight, Search, Building2, Clock } from 'lucide-react';
 
 export const BatchHistoryPage: React.FC = () => {
   const { t } = useTranslation();
   const [selectedCrop, setSelectedCrop] = useState<string>('all');
   const [selectedGrade, setSelectedGrade] = useState<string>('all');
+  const [selectedHub, setSelectedHub] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const { data: hubs = [] } = useQuery({
+    queryKey: ['hubs'],
+    queryFn: () => api.getHubs(),
+  });
 
   const { data: batches = [], isLoading } = useQuery({
     queryKey: ['batches', 'completed'],
@@ -33,6 +42,18 @@ export const BatchHistoryPage: React.FC = () => {
     const finalGrade = (b.final_quality_grade || b.predicted_quality_grade || '').toLowerCase();
     if (selectedGrade !== 'all' && finalGrade !== selectedGrade) {
       return false;
+    }
+    if (selectedHub !== 'all' && b.hub_id !== selectedHub) {
+      return false;
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const cropName = (t(`crops.${b.crop_type.toLowerCase()}`) || b.crop_type).toLowerCase();
+      const hubName = (hubs.find((h) => h.id === b.hub_id)?.name || '').toLowerCase();
+      const batchId = b.id.toLowerCase();
+      if (!cropName.includes(q) && !hubName.includes(q) && !batchId.includes(q)) {
+        return false;
+      }
     }
     return true;
   });
@@ -53,20 +74,47 @@ export const BatchHistoryPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter Toolbar */}
+      {/* Filter and Search Toolbar */}
       <Card>
         <CardContent className="p-3.5 flex flex-wrap items-center gap-3">
+          {/* Search Box */}
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('history.searchPlaceholder')}
+              className="w-full text-xs pl-8 pr-3 py-1.5 border border-input rounded-lg bg-background font-medium text-foreground placeholder:text-muted-foreground"
+            />
+          </div>
+
           <div className="flex items-center text-xs font-bold text-muted-foreground uppercase tracking-wider mr-1">
             <Filter className="w-3.5 h-3.5 mr-1" />
             Filter:
           </div>
+
+          {/* Hub filter */}
+          <select
+            value={selectedHub}
+            onChange={(e) => setSelectedHub(e.target.value)}
+            className="text-xs border border-input rounded-lg py-1.5 px-2.5 bg-background font-medium text-foreground"
+          >
+            <option value="all">{t('history.allHubs')}</option>
+            {hubs.map((hub) => (
+              <option key={hub.id} value={hub.id}>
+                {hub.name}
+              </option>
+            ))}
+          </select>
+
           {/* Crop filter */}
           <select
             value={selectedCrop}
             onChange={(e) => setSelectedCrop(e.target.value)}
             className="text-xs border border-input rounded-lg py-1.5 px-2.5 bg-background font-medium text-foreground"
           >
-            <option value="all">All Crops</option>
+            <option value="all">{t('history.allCrops')}</option>
             <option value="moringa">Moringa</option>
             <option value="hibiscus">Hibiscus</option>
             <option value="prunus">Prunus</option>
@@ -95,7 +143,7 @@ export const BatchHistoryPage: React.FC = () => {
         </div>
       ) : filtered.length === 0 ? (
         <Card className="border-dashed p-12 text-center text-muted-foreground">
-          <History className="w-10 h-10 text-muted mx-auto mb-2" />
+          <History className="w-10 h-10 text-muted-foreground/40 mx-auto mb-2" />
           <p className="font-semibold text-sm">{t('history.noHistory')}</p>
         </Card>
       ) : (
@@ -104,17 +152,34 @@ export const BatchHistoryPage: React.FC = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Batch / Crop</TableHead>
+                <TableHead>{t('history.hub')}</TableHead>
                 <TableHead>Harvest Weight</TableHead>
+                <TableHead>Times & Duration</TableHead>
                 <TableHead>Final Moisture</TableHead>
-                <TableHead>Final Quality Grade</TableHead>
-                <TableHead>Completed Date</TableHead>
+                <TableHead>{t('history.finalGrade')}</TableHead>
                 <TableHead className="text-right">Details</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((batch) => {
-                const finalGrade = batch.final_quality_grade || batch.predicted_quality_grade || 'standard';
-                const endDate = batch.end_time ? new Date(batch.end_time).toLocaleDateString() : 'N/A';
+                const finalGrade =
+                  batch.final_quality_grade || batch.predicted_quality_grade || 'standard';
+                const hub = hubs.find((h) => h.id === batch.hub_id);
+                const startDate = new Date(batch.start_time).toLocaleDateString([], {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
+                const endDate = batch.end_time
+                  ? new Date(batch.end_time).toLocaleDateString([], {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : 'N/A';
+                const duration = formatBatchDuration(batch.start_time, batch.end_time);
 
                 return (
                   <TableRow key={batch.id}>
@@ -126,12 +191,29 @@ export const BatchHistoryPage: React.FC = () => {
                         #{batch.id.slice(0, 8)}
                       </div>
                     </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="text-brand-700 bg-brand-50 flex items-center w-fit">
+                        <Building2 className="w-3 h-3 mr-1" />
+                        {hub?.name || 'Regional Hub'}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="font-semibold text-foreground">
                       {batch.initial_weight_kg} kg
                     </TableCell>
                     <TableCell>
+                      <div className="text-xs text-foreground font-medium flex items-center">
+                        <Clock className="w-3 h-3 mr-1 text-muted-foreground" />
+                        {duration}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {startDate} → {endDate}
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <span className="font-bold text-blue-600">
-                        {batch.current_moisture_pct !== undefined ? `${batch.current_moisture_pct}%` : `${batch.target_moisture_pct}%`}
+                        {batch.current_moisture_pct !== undefined
+                          ? `${batch.current_moisture_pct}%`
+                          : `${batch.target_moisture_pct}%`}
                       </span>
                       <span className="text-[11px] text-muted-foreground block">
                         Target: {batch.target_moisture_pct}%
@@ -140,11 +222,13 @@ export const BatchHistoryPage: React.FC = () => {
                     <TableCell>
                       <PredictionBadge grade={finalGrade} size="sm" />
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground font-medium">
-                      {endDate}
-                    </TableCell>
                     <TableCell className="text-right">
-                      <Button asChild variant="secondary" size="sm" className="text-brand-700 bg-brand-50 hover:bg-brand-100">
+                      <Button
+                        asChild
+                        variant="secondary"
+                        size="sm"
+                        className="text-brand-700 bg-brand-50 hover:bg-brand-100"
+                      >
                         <Link to={`/batches/${batch.id}`}>
                           View
                           <ArrowRight className="w-3 h-3 ml-1" />

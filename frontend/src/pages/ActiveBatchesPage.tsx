@@ -1,66 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
-import { PredictionBadge } from '../components/PredictionBadge';
+import { useAuth } from '../context/AuthContext';
 import { CapacityMeter } from '../components/CapacityMeter';
+import { PredictionBadge } from '../components/PredictionBadge';
 import { CreateBatchModal } from '../components/CreateBatchModal';
+import { CreateBatchDTO } from '../types';
+import {
+  calculateMoistureProgress,
+  formatRemainingHours,
+  getInitialMoistureForCrop,
+} from '../utils/formatters';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import {
   Layers,
   Plus,
+  RefreshCw,
+  Building2,
   Clock,
   Droplets,
   ArrowRight,
   CheckCircle,
-  Building2,
-  RefreshCw,
 } from 'lucide-react';
 
 export const ActiveBatchesPage: React.FC = () => {
-  const { user, isAdmin } = useAuth();
   const { t } = useTranslation();
+  const { user, isAdmin } = useAuth();
   const queryClient = useQueryClient();
 
-  const [selectedHubId, setSelectedHubId] = useState<string>('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedHubId, setSelectedHubId] = useState<string>(
+    user?.role === 'operator' && user?.hub_id ? user.hub_id : ''
+  );
 
-  // Load hubs
+  // Fetch available hubs
   const { data: hubs = [] } = useQuery({
     queryKey: ['hubs'],
     queryFn: () => api.getHubs(),
   });
 
-  // Effective hub id for operator vs admin
-  const effectiveHubId = isAdmin
-    ? selectedHubId || undefined
-    : user?.hub_id || undefined;
+  // Effective hub id for operator or admin selection
+  const effectiveHubId = user?.role === 'operator' ? user.hub_id : selectedHubId;
 
-  // Load active batches with 30s polling
+  // Fetch active batches
   const {
     data: batches = [],
     isLoading,
-    isRefetching,
     refetch,
+    isRefetching,
   } = useQuery({
     queryKey: ['batches', 'active', effectiveHubId],
-    queryFn: () => api.getBatches('active', effectiveHubId),
+    queryFn: () => api.getBatches('active', effectiveHubId || undefined),
     refetchInterval: 30000,
   });
 
   // Create Batch Mutation
   const createMutation = useMutation({
-    mutationFn: (data: {
-      hub_id: string;
-      crop_type: string;
-      initial_weight_kg: number;
-      target_moisture_pct?: number;
-    }) => api.createBatch(data),
+    mutationFn: (data: CreateBatchDTO) => api.createBatch(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['batches'] });
     },
@@ -74,11 +75,17 @@ export const ActiveBatchesPage: React.FC = () => {
     },
   });
 
-  // Calculate current loaded weight in the selected hub for capacity check
-  const currentLoadedWeight = batches.reduce(
-    (acc, b) => acc + (b.initial_weight_kg || 0),
-    0
-  );
+  // Per ADR-0002: Track 200 kg capacity per regional solar dryer
+  const hubLoadedWeights = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const b of batches) {
+      map[b.hub_id] = (map[b.hub_id] || 0) + (b.initial_weight_kg || 0);
+    }
+    return map;
+  }, [batches]);
+
+  const selectedHub = hubs.find((h) => h.id === effectiveHubId);
+  const selectedHubWeight = effectiveHubId ? hubLoadedWeights[effectiveHubId] || 0 : 0;
 
   return (
     <div className="space-y-6">
@@ -134,20 +141,46 @@ export const ActiveBatchesPage: React.FC = () => {
         </div>
       )}
 
-      {/* Hub Dryer Capacity Meter banner (per ADR-0002) */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="sm:flex sm:items-center sm:justify-between mb-2">
-            <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Dryer Capacity Utilization (200 kg Max)
+      {/* Per-Dryer Capacity Meters (per ADR-0002) */}
+      {effectiveHubId ? (
+        <Card>
+          <CardContent className="p-4">
+            <div className="sm:flex sm:items-center sm:justify-between mb-2">
+              <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center">
+                <Building2 className="w-3.5 h-3.5 mr-1.5 text-brand-600" />
+                {selectedHub?.name || 'Hub'} Dryer Capacity (200 kg)
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {batches.length} active batch{batches.length !== 1 ? 'es' : ''} currently drying
+              </div>
             </div>
-            <div className="text-xs text-muted-foreground">
-              {batches.length} active batch{batches.length !== 1 ? 'es' : ''} currently drying
-            </div>
-          </div>
-          <CapacityMeter currentWeightKg={currentLoadedWeight} maxCapacityKg={200} />
-        </CardContent>
-      </Card>
+            <CapacityMeter currentWeightKg={selectedHubWeight} maxCapacityKg={200} />
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {hubs.map((hub) => {
+            const loaded = hubLoadedWeights[hub.id] || 0;
+            const count = batches.filter((b) => b.hub_id === hub.id).length;
+            return (
+              <Card key={hub.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-xs font-bold text-foreground flex items-center">
+                      <Building2 className="w-3.5 h-3.5 mr-1 text-brand-600" />
+                      {hub.name}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {count} active batch{count !== 1 ? 'es' : ''}
+                    </div>
+                  </div>
+                  <CapacityMeter currentWeightKg={loaded} maxCapacityKg={200} />
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       {/* Batches Grid */}
       {isLoading ? (
@@ -158,19 +191,13 @@ export const ActiveBatchesPage: React.FC = () => {
         </div>
       ) : batches.length === 0 ? (
         <Card className="border-dashed p-12 text-center">
-          <Layers className="w-12 h-12 text-muted mx-auto mb-3" />
-          <h3 className="text-base font-bold text-foreground">{t('batches.noActive')}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Click &quot;New Batch&quot; or start the simulator to feed real-time drying data.
+          <Layers className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+          <h3 className="text-base font-semibold text-foreground">
+            {t('batches.noActive')}
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Click "+ New Batch" to load a harvest into the solar dryer.
           </p>
-          <Button
-            variant="brand"
-            onClick={() => setModalOpen(true)}
-            className="mt-4 inline-flex"
-          >
-            <Plus className="w-4 h-4 mr-1.5" />
-            {t('batches.createNew')}
-          </Button>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -179,17 +206,19 @@ export const ActiveBatchesPage: React.FC = () => {
               t(`crops.${batch.crop_type.toLowerCase()}`) || batch.crop_type;
             const hub = hubs.find((h) => h.id === batch.hub_id);
 
-            // Remaining hours formatting
-            const remHours = batch.predicted_remaining_hours ?? 0;
-            const h = Math.floor(remHours);
-            const m = Math.round((remHours - h) * 60);
+            // Remaining hours formatting via shared helper
+            const { formatted: remHoursFormatted } = formatRemainingHours(
+              batch.predicted_remaining_hours
+            );
 
-            // Moisture progress estimate
-            const currM = batch.current_moisture_pct ?? 75;
+            // Moisture progress estimate using crop initial moisture baseline
+            const currM =
+              batch.current_moisture_pct ?? getInitialMoistureForCrop(batch.crop_type);
             const targetM = batch.target_moisture_pct;
-            const moistureProgress = Math.min(
-              100,
-              Math.max(0, Math.round(((75 - currM) / (75 - targetM)) * 100))
+            const moistureProgress = calculateMoistureProgress(
+              batch.crop_type,
+              currM,
+              targetM
             );
 
             return (
@@ -251,7 +280,9 @@ export const ActiveBatchesPage: React.FC = () => {
                       {t('batches.remainingTime')}:
                     </span>
                     <span className="font-extrabold text-foreground">
-                      {remHours > 0 ? `${h}h ${m}m` : 'Target reached'}
+                      {(batch.predicted_remaining_hours ?? 0) > 0
+                        ? remHoursFormatted
+                        : 'Target reached'}
                     </span>
                   </div>
 
@@ -297,8 +328,8 @@ export const ActiveBatchesPage: React.FC = () => {
           await createMutation.mutateAsync(data);
         }}
         hubs={hubs}
-        defaultHubId={effectiveHubId}
-        currentLoadedWeight={currentLoadedWeight}
+        defaultHubId={effectiveHubId || undefined}
+        activeBatches={batches}
       />
     </div>
   );

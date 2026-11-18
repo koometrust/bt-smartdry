@@ -1,4 +1,4 @@
-import { Batch, Hub, Reading, TokenResponse, User } from '../types';
+import { Batch, CreateBatchDTO, Hub, Reading, TokenResponse, User } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -73,12 +73,7 @@ class ApiClient {
     return this.request<Batch>(`/api/v1/batches/${id}`);
   }
 
-  async createBatch(data: {
-    hub_id: string;
-    crop_type: string;
-    initial_weight_kg: number;
-    target_moisture_pct?: number;
-  }): Promise<Batch> {
+  async createBatch(data: CreateBatchDTO): Promise<Batch> {
     return this.request<Batch>('/api/v1/batches/', {
       method: 'POST',
       body: JSON.stringify(data),

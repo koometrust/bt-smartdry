@@ -18,14 +18,21 @@ export interface User {
 export interface Hub {
   id: string;
   name: string;
-  location: string;
+  location: HubLocation | string;
   total_capacity_kg: number;
+}
+
+export interface CreateBatchDTO {
+  hub_id: string;
+  crop_type: CropType | string;
+  initial_weight_kg: number;
+  target_moisture_pct?: number;
 }
 
 export interface Batch {
   id: string;
   hub_id: string;
-  crop_type: string;
+  crop_type: CropType | string;
   initial_weight_kg: number;
   target_moisture_pct: number;
   current_moisture_pct?: number;

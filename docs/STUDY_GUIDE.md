@@ -125,3 +125,4 @@ If the supervisor asks you to change the train/test ratio (e.g. to 75/25 or 70/3
 
 ### Q: "How does the frontend handle real-time telemetry without WebSockets?"
 > **Answer:** "As documented in `docs/context.md`, solar drying kinetics evolve over hours, not milliseconds. React Query polling every 30 seconds (`refetchInterval: 30000`) avoids persistent WebSocket connection drops in rural Kenyan hubs with unstable 3G/Edge connections while providing fresh data."
+

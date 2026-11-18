@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import {
   Sun,
   Layers,
@@ -20,6 +22,16 @@ export const Navbar: React.FC = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const { data: hubs = [] } = useQuery({
+    queryKey: ['hubs'],
+    queryFn: () => api.getHubs(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const activeHubName = isAdmin
+    ? t('nav.allHubs')
+    : (hubs.find((h) => h.id === user?.hub_id)?.name || 'Hub');
 
   const toggleLanguage = () => {
     const nextLang = i18n.language === 'en' ? 'sw' : 'en';
@@ -93,6 +105,14 @@ export const Navbar: React.FC = () => {
               {i18n.language === 'en' ? 'EN | Kiswahili' : 'SW | English'}
             </button>
 
+            {/* Active Hub Indicator */}
+            {user && (
+              <div className="hidden lg:flex items-center text-xs font-semibold text-gray-700 bg-brand-50/80 px-2.5 py-1.5 rounded-md border border-brand-200">
+                <Building2 className="w-3.5 h-3.5 mr-1.5 text-brand-700" />
+                <span>{activeHubName}</span>
+              </div>
+            )}
+
             {/* User Profile Badge */}
             {user && (
               <div className="flex items-center text-xs text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
@@ -161,7 +181,10 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center justify-between px-3 py-2">
                 <div>
                   <p className="text-sm font-bold text-gray-900">{user.username}</p>
-                  <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                  <p className="text-xs text-gray-500 flex items-center mt-0.5">
+                    <span className="font-semibold text-brand-700 mr-2">{activeHubName}</span>
+                    <span>• {isAdmin ? t('nav.admin') : t('nav.operator')}</span>
+                  </p>
                 </div>
                 <button
                   onClick={logout}

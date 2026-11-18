@@ -6,6 +6,7 @@ import { api } from '../api/client';
 import { PredictionBadge } from '../components/PredictionBadge';
 import { AdvisoryCard } from '../components/AdvisoryCard';
 import { SensorChart } from '../components/SensorChart';
+import { formatRemainingHours } from '../utils/formatters';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -64,9 +65,7 @@ export const BatchDetailPage: React.FC = () => {
   }
 
   const latestReading = readings.length > 0 ? readings[readings.length - 1] : null;
-  const remHours = batch.predicted_remaining_hours ?? 0;
-  const h = Math.floor(remHours);
-  const m = Math.round((remHours - h) * 60);
+  const { formatted: remHoursFormatted } = formatRemainingHours(batch.predicted_remaining_hours);
 
   // Calculate elapsed time from start_time
   const startTime = new Date(batch.start_time);
@@ -161,7 +160,7 @@ export const BatchDetailPage: React.FC = () => {
             </span>
             <div className="mt-2 flex items-baseline">
               <span className="text-2xl font-black text-foreground">
-                {remHours > 0 ? `${h}h ${m}m` : '0h 0m'}
+                {remHoursFormatted}
               </span>
               <span className="ml-2 text-xs font-medium text-muted-foreground">
                 Elapsed: {elapsedH}h {elapsedM}m
@@ -211,27 +210,27 @@ export const BatchDetailPage: React.FC = () => {
           <CardContent className="p-5 pt-0">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
               <div className="p-3 bg-red-50 rounded-lg">
-                <span className="text-[10px] font-bold text-red-600 uppercase">Dryer Temp</span>
+                <span className="text-[10px] font-bold text-red-600 uppercase">{t('detail.dryerTemp')}</span>
                 <p className="text-lg font-black text-red-900">{latestReading.temperature}°C</p>
               </div>
               <div className="p-3 bg-cyan-50 rounded-lg">
-                <span className="text-[10px] font-bold text-cyan-600 uppercase">Dryer Humidity</span>
+                <span className="text-[10px] font-bold text-cyan-600 uppercase">{t('detail.dryerHumidity')}</span>
                 <p className="text-lg font-black text-cyan-900">{latestReading.humidity}%</p>
               </div>
               <div className="p-3 bg-purple-50 rounded-lg">
-                <span className="text-[10px] font-bold text-purple-600 uppercase">VPD Deficit</span>
+                <span className="text-[10px] font-bold text-purple-600 uppercase">{t('detail.vpd')}</span>
                 <p className="text-lg font-black text-purple-900">{latestReading.vpd} kPa</p>
               </div>
               <div className="p-3 bg-amber-50 rounded-lg">
-                <span className="text-[10px] font-bold text-amber-600 uppercase">Ambient Temp</span>
+                <span className="text-[10px] font-bold text-amber-600 uppercase">{t('detail.ambientTemp')}</span>
                 <p className="text-lg font-black text-amber-900">{latestReading.ambient_temperature}°C</p>
               </div>
               <div className="p-3 bg-sky-50 rounded-lg">
-                <span className="text-[10px] font-bold text-sky-600 uppercase">Ambient Humidity</span>
+                <span className="text-[10px] font-bold text-sky-600 uppercase">{t('detail.ambientHumidity')}</span>
                 <p className="text-lg font-black text-sky-900">{latestReading.ambient_humidity}%</p>
               </div>
               <div className="p-3 bg-blue-50 rounded-lg">
-                <span className="text-[10px] font-bold text-blue-600 uppercase">Current Moisture</span>
+                <span className="text-[10px] font-bold text-blue-600 uppercase">{t('detail.currentMoisture')}</span>
                 <p className="text-lg font-black text-blue-900">{latestReading.current_moisture}%</p>
               </div>
             </div>

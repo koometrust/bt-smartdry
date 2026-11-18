@@ -12,7 +12,8 @@
     "login": "Login",
     "logout": "Logout",
     "operator": "Operator",
-    "admin": "Admin"
+    "admin": "Administrator",
+    "allHubs": "All Hubs"
   },
   "auth": {
     "title": "Sign In to Your Hub",
@@ -72,8 +73,10 @@
     "cancel": "Cancel",
     "submit": "Start Drying Cycle",
     "submitting": "Creating...",
-    "capacityNotice": "Available dryer capacity in this hub: {{available}} kg / 200 kg.",
-    "capacityError": "Batch weight exceeds available dryer capacity!"
+    "capacityNotice": "Available dryer capacity in {{hubName}}: {{available}} kg / 200 kg.",
+    "capacityError": "Batch weight exceeds available dryer capacity!",
+    "enterValidWeight": "Please enter a valid harvest weight.",
+    "exceedsCapacity": "Batch weight ({{weight}} kg) exceeds available capacity ({{available}} kg) of this 200 kg solar dryer!"
   },
   "detail": {
     "back": "← Back to Batches",
@@ -86,11 +89,17 @@
     "advisoryTitle": "Operator Action Advisory",
     "mlPredictions": "AI Predictive Telemetry",
     "sensorStatus": "Live Sensor Readings",
-    "lastUpdated": "Updated {{seconds}}s ago"
+    "lastUpdated": "Updated {{seconds}}s ago",
+    "dryerTemp": "Dryer Temp",
+    "dryerHumidity": "Dryer Humidity",
+    "vpd": "VPD Deficit",
+    "ambientTemp": "Ambient Temp",
+    "ambientHumidity": "Ambient Humidity",
+    "currentMoisture": "Current Moisture"
   },
   "hubs": {
     "title": "Dryer Hubs Overview",
-    "subtitle": "Multi-batch capacity tracking across 3 regional solar dryers (200 kg limit per dryer)",
+    "subtitle": "Multi-batch capacity tracking across 3 regional solar dryers (200 kg capacity per dryer)",
     "meru": "Meru Hub",
     "tharaka_nithi": "Tharaka Nithi Hub",
     "eldoret": "Eldoret Hub",
@@ -107,19 +116,35 @@
     "totalCompleted": "Total Completed: {{count}}",
     "filterGrade": "Filter by Grade",
     "allGrades": "All Grades",
+    "filterCrop": "Filter by Crop",
+    "allCrops": "All Crops",
+    "filterHub": "Filter by Hub",
+    "allHubs": "All Hubs",
+    "searchPlaceholder": "Search by Batch ID, crop, or hub...",
     "dateCompleted": "Completed At",
+    "startTime": "Started At",
+    "duration": "Duration",
+    "hub": "Hub Location",
     "finalGrade": "Final Grade",
     "noHistory": "No completed batches recorded yet."
   },
   "analytics": {
     "title": "System Analytics & Quality Performance",
     "subtitle": "Regional solar drying efficiency and crop grade distribution",
-    "totalBatches": "Total Batches Processed",
-    "totalWeight": "Total Dried Weight",
+    "totalBatches": "Total Batches",
+    "completedCycles": "{{count}} completed cycles",
+    "totalWeight": "Total Weight",
+    "acrossHubs": "Across 3 regional hubs",
     "exportRate": "Export Quality Rate",
+    "optimalRange": "Optimal solar moisture range",
+    "dryerCapacity": "Dryer Capacity",
+    "perDryer": "200 kg per dryer (ADR-0002)",
     "gradeDistribution": "Quality Grade Breakdown",
     "cropBreakdown": "Crop Volume Distribution",
-    "hubPerformance": "Hub Drying Comparisons"
+    "hubPerformance": "Comparative Hub Performance",
+    "hub": "Hub Location",
+    "batchesCount": "Batches",
+    "weightKg": "Weight Dried",
+    "activeLoad": "Current Dryer Load"
   }
 }
-

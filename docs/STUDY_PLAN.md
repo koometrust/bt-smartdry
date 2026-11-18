@@ -99,3 +99,4 @@ python -m simulator.main --speed 60.0
 * **Demo Accounts:**
   - Manager: `manager@meru.bt.co.ke` / `SmartDry#2024`
   - Operator: `operator@meru.bt.co.ke` / `SmartDry#2024`
+
