@@ -163,7 +163,7 @@ export const BatchDetailPage: React.FC = () => {
                 {remHoursFormatted}
               </span>
               <span className="ml-2 text-xs font-medium text-muted-foreground">
-                Elapsed: {elapsedH}h {elapsedM}m
+                {t('detail.elapsed', { hours: elapsedH, minutes: elapsedM })}
               </span>
             </div>
           </CardContent>

@@ -1,94 +1,139 @@
-# Milestone 3 Code Review Report
+# Code Review — Milestone 3 Review-Fix Commit
 
-Conducted across two parallel axes (**Standards** and **Spec**) against merge base `f4bb91e...HEAD`.
-
----
-
-## Standards Axis
-
-### (a) Documented Standards Violations (Hard Violations)
-
-1. **`docs/context.md` (Batch Lifecycle & Operator Action) & `GLOSSARY.md` (Over-drying)**
-   - **File:** `simulator/main.py:229-234`
-   - **Status:** **RESOLVED**
-   - **Fix:** Removed automatic `PATCH /api/v1/batches/{id}` status completion in `simulator/main.py`. The simulator logs when moisture target is reached and allows moisture to continue decaying, properly enabling over-drying alerts and degradation down to equilibrium moisture while awaiting operator confirmation.
-
-2. **`docs/adr/0002-multi-batch-per-dryer.md` (Per-Dryer Capacity Modeling)**
-   - **File:** `frontend/src/pages/ActiveBatchesPage.tsx`
-   - **Status:** **RESOLVED**
-   - **Fix:** Disaggregated multi-hub capacity meter. When viewing "All Hubs", the page now renders 3 independent regional capacity meters (Meru, Tharaka Nithi, Eldoret), each strictly tracking its own 200 kg capacity limit without conflating separate dryers.
-
-3. **`GLOSSARY.md` (Language & Avoid Vocabulary)**
-   - **Files:** `frontend/src/i18n/locales/en.json`, `sw.json`, `frontend/src/components/Navbar.tsx`, `frontend/src/pages/AnalyticsPage.tsx`
-   - **Status:** **RESOLVED**
-   - **Fix:** Replaced "Admin" with "Administrator" (Swahili: "Msimamizi Mkuu"). Replaced "Dryer Capacity Limit" with "Dryer Capacity" (Swahili: "Uwezo wa Kikaushio").
-
-4. **`docs/context.md` (Bilingual Frontend i18n)**
-   - **Files:** `frontend/src/pages/AnalyticsPage.tsx`, `frontend/src/pages/BatchDetailPage.tsx`, `frontend/src/components/CreateBatchModal.tsx`
-   - **Status:** **RESOLVED**
-   - **Fix:** Fully internationalized all sensor snapshot labels ("Dryer Temp", "Dryer Humidity", "VPD", "Ambient Temp", "Current Moisture"), KPI headers, and modal validation error messages via `en.json` and `sw.json`.
-
-### (b) Baseline Code Smells (Judgement Calls)
-
-1. **Primitive Obsession** (`frontend/src/types/index.ts`)
-   - **Status:** **RESOLVED**
-   - **Fix:** Typed `Batch.crop_type` as `CropType | string` and `Hub.location` as `HubLocation | string`.
-2. **Data Clumps** (`frontend/src/types/index.ts`, `CreateBatchModal.tsx`, `client.ts`)
-   - **Status:** **RESOLVED**
-   - **Fix:** Extracted and unified `CreateBatchDTO` across types, API client, and modal.
-3. **Duplicated Code** (`BatchDetailPage.tsx` vs `ActiveBatchesPage.tsx`)
-   - **Status:** **RESOLVED**
-   - **Fix:** Extracted `formatRemainingHours`, `calculateMoistureProgress`, and `formatBatchDuration` into shared module `frontend/src/utils/formatters.ts`.
-4. **Feature Envy** (`frontend/src/pages/ActiveBatchesPage.tsx`)
-   - **Status:** **RESOLVED**
-   - **Fix:** Cleaned up hub loaded weight calculation via dedicated `useMemo` grouping.
+**Commit:** `3568cf9` fix(review): address Milestone 3 standards and spec review findings  
+**Fixed point:** `0a40371`  
+**Reviewed:** 2026-11-18  
+**Axes:** Standards (documented rules + smell baseline) · Spec (user stories + issue ACs)
 
 ---
 
-## Spec Axis
+## Standards
 
-### (a) Missing or Partial Requirements
+### `simulator/main.py`
 
-1. **Batch History Hub Filter, Start Time/Duration, and Search**:
-   - **File:** `frontend/src/pages/BatchHistoryPage.tsx`
-   - **Status:** **RESOLVED**
-   - **Fix:** Added hub location filter dropdown, free-text search across Batch ID / crop / hub, and columns for Start Time, End Time, and Duration.
-2. **Comparative Hub Performance in Analytics**:
-   - **File:** `frontend/src/pages/AnalyticsPage.tsx`
-   - **Status:** **RESOLVED**
-   - **Fix:** Added Comparative Hub Performance table showing Batches, Weight Dried, Export Quality Rate %, and Current Dryer Load against the 200 kg capacity per hub.
-3. **Active Hub Indicator in Navbar**:
-   - **File:** `frontend/src/components/Navbar.tsx`
-   - **Status:** **RESOLVED**
-   - **Fix:** Added active/assigned hub indicator badge displaying the assigned Hub name for operators and "All Hubs" for administrators.
-4. **Auth Guard & Batch Card Unit Tests**:
-   - **Files:** `frontend/src/tests/authGuard.test.ts`, `frontend/src/tests/batchCard.test.ts`
-   - **Status:** **RESOLVED**
-   - **Fix:** Added comprehensive test suites covering route access permissions, operator vs admin scoping, crop-specific initial moisture decay, remaining time formatting, and duration calculations.
+**🔴 Hard violation — GLOSSARY.md: "Administrator / Avoid: admin"**
 
-### (b) Behaviour Not Asked For (Scope Creep)
-
-1. **shadcn/ui & Radix UI Primitives Integration**:
-   - **Status:** **ACKNOWLEDGED & RETAINED** (Explicitly requested by user in chat).
-
-### (c) Requirements Implemented Buggy or Wrong
-
-1. **Dryer Capacity Check in Batch Creation**:
-   - **File:** `frontend/src/components/CreateBatchModal.tsx`
-   - **Status:** **RESOLVED**
-   - **Fix:** Modal dynamically computes available capacity for the selected hub whenever the hub dropdown changes, preventing cross-hub blocking.
-2. **Hardcoded Moisture Baseline for Progress Bar**:
-   - **Files:** `frontend/src/pages/ActiveBatchesPage.tsx`, `frontend/src/utils/formatters.ts`
-   - **Status:** **RESOLVED**
-   - **Fix:** Replaced hardcoded 75% baseline with crop-specific initial moisture baselines (`Moringa: 78%`, `Hibiscus: 82%`, `Prunus: 70%`).
-3. **Simulator Authenticates as Admin**:
-   - **File:** `simulator/main.py`
-   - **Status:** **RESOLVED**
-   - **Fix:** Simulator now supports configurable authentication credentials via `SIMULATOR_USERNAME` and `SIMULATOR_PASSWORD` environment variables, logging in with explicit credential configuration.
+Default values introduced for `SIMULATOR_USERNAME` / `SIMULATOR_PASSWORD` are `"admin"` / `"adminpassword123"`:
+```python
++SIMULATOR_USERNAME = os.getenv("SIMULATOR_USERNAME", "admin")
++SIMULATOR_PASSWORD = os.getenv("SIMULATOR_PASSWORD", "adminpassword123")
+```
+The GLOSSARY defines **Administrator** and explicitly commands *"Avoid: admin"*. The default string `"admin"` appears in source code (and in log output when the env var is unset), violating the vocabulary rule. The fix that was supposed to resolve the "Authenticates as Admin" bug now embeds the forbidden term as the fallback default.
 
 ---
 
-## Verification Summary
-- **Python Test Suite:** All 27 tests pass (`pytest ml/tests/ backend/tests/ simulator/test_simulator.py`).
-- **Frontend Test Suite:** All 13 tests across 4 test files pass (`npm run test`).
-- **Production Build:** Passes cleanly without warnings or errors (`tsc && vite build`).
+### `frontend/src/pages/ActiveBatchesPage.tsx`
+
+**🔴 Hard violation — `docs/context.md` Bilingual Frontend i18n**
+
+Replacement empty-state string is hardcoded English, not routed through `react-i18next`:
+```tsx
++  Click "+ New Batch" to load a harvest into the solar dryer.
+```
+Finding #4 was declared RESOLVED, but this hunk introduces a new hardcoded string in the same file.
+
+**🟡 Judgement call — Primitive Obsession**
+
+Capacity label inlines a magic constant and an untranslated fallback:
+```tsx
+{selectedHub?.name || 'Hub'} Dryer Capacity (200 kg)
+```
+`'Hub'` is not a translated string; `200 kg` is a magic constant inconsistent with the pattern used elsewhere.
+
+---
+
+### `frontend/src/pages/BatchHistoryPage.tsx`
+
+**🔴 Hard violation — `docs/context.md` Bilingual Frontend i18n**
+
+New table headers `"Batch / Crop"`, `"Harvest Weight"`, `"Times & Duration"`, and `"Target: {batch.target_moisture_pct}%"` are hardcoded English bypassing `react-i18next`. Other new columns were correctly added to both `en.json` and `sw.json`; these four were missed.
+
+---
+
+### `frontend/src/pages/BatchDetailPage.tsx`
+
+**🔴 Hard violation — `docs/context.md` Bilingual Frontend i18n (surviving miss)**
+
+```tsx
+  Elapsed: {elapsedH}h {elapsedM}m
+```
+This hardcoded label is in a hunk the commit modifies, and was not addressed despite finding #4 being declared RESOLVED.
+
+---
+
+### `frontend/src/utils/formatters.ts` (new file)
+
+**🟡 Judgement call — Speculative Generality**
+
+`formatRemainingHours` returns `{ hours, minutes, formatted }` but all production callsites destructure only `formatted`. The `hours` and `minutes` fields go unused outside tests — returning a struct where a string suffices is YAGNI overhead.
+
+**🟡 Judgement call — Duplicated Code (minor)**
+
+`formatRemainingHours` and `formatBatchDuration` both implement the same `Math.floor` / `Math.round` hours-minutes arithmetic independently (~10 lines apart). A private `splitHoursMinutes(decimalHours)` helper would remove the duplication.
+
+---
+
+## Spec
+
+### `simulator/main.py`
+
+**🔴 Missing — Issue 05 AC: "authenticates using seed operator credentials"**
+
+Credentials are now configurable, but the hardcoded *defaults* remain `"admin"` / `"adminpassword123"`. Out of the box — with no env override — the simulator still authenticates as the admin account, violating the AC. Structurally correct fix, incomplete execution.
+
+**🔴 Missing — Issue 05 AC: "Handles batch completion when target moisture is reached"**
+
+Removing the auto-`PATCH` was correct per `docs/context.md` (operator must confirm removal), but the simulator now has **no path whatsoever** to remove a batch from `self.batch_state` once moisture decays below the target. The batch remains in state forever and keeps generating sub-target readings, rather than halting simulation for that batch while awaiting operator action. The AC is unmet.
+
+---
+
+### `frontend/src/pages/BatchHistoryPage.tsx`
+
+**🟡 Partial — Issue 03 AC: "Columns: Batch ID, Crop, Weight, Start/End times, Final Moisture, Final Quality Grade badge"**
+
+Start and End times are merged into a combined "Times & Duration" cell alongside a duration string. The spec lists them as distinct required columns; the display is richer but diverges from the stated column structure.
+
+---
+
+### `frontend/src/utils/formatters.ts`
+
+**🟡 Scope creep — `CROP_DEFAULT_TARGET_MOISTURE` exported but unused**
+
+This constant is exported (not referenced anywhere in the diff) and was never requested. Dead exported surface area.
+
+---
+
+### `frontend/src/pages/ActiveBatchesPage.tsx`
+
+**🟡 Scope creep — Empty-state "New Batch" shortcut button removed**
+
+The original empty-state card included a shortcut `<Button>` to open the modal (removed in diff). No spec item requested its removal; this silently degrades discoverability for operators.
+
+---
+
+### `frontend/src/tests/authGuard.test.ts`
+
+**🔴 Wrong — Issue 05 AC: "Frontend unit & component tests verifying authentication guards"**
+
+`authGuard.test.ts` defines its own local `canAccessRoute` function that mirrors the guard logic, rather than importing and exercising the actual `ProtectedRoute` / `AuthContext`. The tests validate a reimplementation, not the real guard. A bug introduced into `ProtectedRoute.tsx` would not be caught by these tests.
+
+---
+
+### `frontend/src/pages/ActiveBatchesPage.tsx`
+
+**🔴 Wrong — `spec.md` L34: "react-i18next with English and Kiswahili translations covering all labels"**
+
+The remaining-time display branch hardcodes English:
+```tsx
+'Target reached'
+```
+instead of `t('...')`. All surrounding sensor labels were internationalized but this string was missed.
+
+---
+
+## Summary
+
+| Axis | Hard violations | Judgement calls | Worst issue |
+|------|----------------|-----------------|-------------|
+| Standards | 4 | 3 | Bilingual i18n misses in 3 files (surviving from the finding declared RESOLVED) |
+| Spec | 4 | 3 | Simulator batch-completion handling is fully broken — batches never leave `batch_state` after moisture decays below target |

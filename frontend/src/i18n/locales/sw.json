@@ -50,6 +50,9 @@
     "hubFilter": "Chuja kwa Kituo",
     "allHubs": "Vituo Vyote",
     "noActive": "Hakuna mzigo unaokaushwa kwenye kituo hiki kwa sasa.",
+    "noActiveBody": "Bofya \"+ Pakia Mzigo Mpya\" kupakia mavuno kwenye kikaushio cha jua.",
+    "hubFallback": "Kituo",
+    "targetReached": "Lengo limefikiwa",
     "batchId": "Nambari ya Mzigo",
     "crop": "Aina ya Zao",
     "initialWeight": "Uzito wa Awali",
@@ -95,7 +98,8 @@
     "vpd": "Upungufu wa Shinikizo (VPD)",
     "ambientTemp": "Joto la Nje",
     "ambientHumidity": "Unyevu wa Nje",
-    "currentMoisture": "Unyevu wa Mazao Sasa"
+    "currentMoisture": "Unyevu wa Mazao Sasa",
+    "elapsed": "Muda uliopita: {{hours}}h {{minutes}}m"
   },
   "hubs": {
     "title": "Muhtasari wa Vituo vya Kukausha",
@@ -126,7 +130,11 @@
     "duration": "Muda Uliotumika",
     "hub": "Eneo la Kituo",
     "finalGrade": "Daraja la Mwisho",
-    "noHistory": "Bado hakuna mizigo iliyokamilika."
+    "noHistory": "Bado hakuna mizigo iliyokamilika.",
+    "batchCrop": "Mzigo / Zao",
+    "harvestWeight": "Uzito wa Mavuno",
+    "timesDuration": "Nyakati na Muda",
+    "target": "Lengo: {{target}}%"
   },
   "analytics": {
     "title": "Takwimu za Mfumo na Ubora wa Mazao",

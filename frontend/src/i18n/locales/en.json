@@ -50,6 +50,9 @@
     "hubFilter": "Filter by Hub",
     "allHubs": "All Hubs",
     "noActive": "No active batches currently drying in this hub.",
+    "noActiveBody": "Click \"+ New Batch\" to load a harvest into the solar dryer.",
+    "hubFallback": "Hub",
+    "targetReached": "Target reached",
     "batchId": "Batch ID",
     "crop": "Crop Type",
     "initialWeight": "Initial Weight",
@@ -95,7 +98,8 @@
     "vpd": "VPD Deficit",
     "ambientTemp": "Ambient Temp",
     "ambientHumidity": "Ambient Humidity",
-    "currentMoisture": "Current Moisture"
+    "currentMoisture": "Current Moisture",
+    "elapsed": "Elapsed: {{hours}}h {{minutes}}m"
   },
   "hubs": {
     "title": "Dryer Hubs Overview",
@@ -126,7 +130,11 @@
     "duration": "Duration",
     "hub": "Hub Location",
     "finalGrade": "Final Grade",
-    "noHistory": "No completed batches recorded yet."
+    "noHistory": "No completed batches recorded yet.",
+    "batchCrop": "Batch / Crop",
+    "harvestWeight": "Harvest Weight",
+    "timesDuration": "Times & Duration",
+    "target": "Target: {{target}}%"
   },
   "analytics": {
     "title": "System Analytics & Quality Performance",

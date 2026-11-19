@@ -47,3 +47,4 @@ describe('Batch Card Calculations & Formatters', () => {
     expect(formatBatchDuration(startTime, endTime)).toBe('3h 30m');
   });
 });
+

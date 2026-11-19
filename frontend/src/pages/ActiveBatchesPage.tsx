@@ -148,7 +148,7 @@ export const ActiveBatchesPage: React.FC = () => {
             <div className="sm:flex sm:items-center sm:justify-between mb-2">
               <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center">
                 <Building2 className="w-3.5 h-3.5 mr-1.5 text-brand-600" />
-                {selectedHub?.name || 'Hub'} Dryer Capacity (200 kg)
+                {selectedHub?.name || t('batches.hubFallback')} Dryer Capacity (200 kg)
               </div>
               <div className="text-xs text-muted-foreground">
                 {batches.length} active batch{batches.length !== 1 ? 'es' : ''} currently drying
@@ -196,7 +196,7 @@ export const ActiveBatchesPage: React.FC = () => {
             {t('batches.noActive')}
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Click "+ New Batch" to load a harvest into the solar dryer.
+            {t('batches.noActiveBody')}
           </p>
         </Card>
       ) : (
@@ -282,7 +282,7 @@ export const ActiveBatchesPage: React.FC = () => {
                     <span className="font-extrabold text-foreground">
                       {(batch.predicted_remaining_hours ?? 0) > 0
                         ? remHoursFormatted
-                        : 'Target reached'}
+                        : t('batches.targetReached')}
                     </span>
                   </div>
 

@@ -72,3 +72,4 @@ export function formatBatchDuration(startTime: string, endTime?: string | null):
   const m = Math.round((diffHours - h) * 60);
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
+

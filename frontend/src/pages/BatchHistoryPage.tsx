@@ -151,10 +151,10 @@ export const BatchHistoryPage: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Batch / Crop</TableHead>
+                <TableHead>{t('history.batchCrop')}</TableHead>
                 <TableHead>{t('history.hub')}</TableHead>
-                <TableHead>Harvest Weight</TableHead>
-                <TableHead>Times & Duration</TableHead>
+                <TableHead>{t('history.harvestWeight')}</TableHead>
+                <TableHead>{t('history.timesDuration')}</TableHead>
                 <TableHead>Final Moisture</TableHead>
                 <TableHead>{t('history.finalGrade')}</TableHead>
                 <TableHead className="text-right">Details</TableHead>
@@ -216,7 +216,7 @@ export const BatchHistoryPage: React.FC = () => {
                           : `${batch.target_moisture_pct}%`}
                       </span>
                       <span className="text-[11px] text-muted-foreground block">
-                        Target: {batch.target_moisture_pct}%
+                        {t('history.target', { target: batch.target_moisture_pct })}
                       </span>
                     </TableCell>
                     <TableCell>
