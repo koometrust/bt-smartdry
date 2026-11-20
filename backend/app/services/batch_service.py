@@ -11,6 +11,7 @@ from app.models.hub import Hub
 from app.models.reading import Reading
 from app.models.user import User
 from app.schemas.batch import BatchCreate, BatchResponse, BatchStatus, CropType, DEFAULT_TARGET_MOISTURE
+from app.services.loss_service import calculate_avoided_loss
 
 
 async def create_batch(
@@ -156,6 +157,15 @@ async def complete_batch(
     batch.status = BatchStatus.COMPLETED.value
     batch.end_time = datetime.now(timezone.utc)
     
+    # Calculate avoided post-harvest loss
+    loss_result = calculate_avoided_loss(
+        crop_type=batch.crop_type,
+        initial_weight_kg=batch.initial_weight_kg,
+        quality_grade=batch.predicted_quality_grade
+    )
+    batch.avoided_loss_kg = loss_result.avoided_loss_kg
+    batch.avoided_loss_kes = loss_result.avoided_loss_kes
+
     await db.commit()
     await db.refresh(batch)
 

@@ -267,8 +267,13 @@ class TelemetrySimulator:
                 )
 
 
-def run_simulator():
-    logger.info(f"Starting BT-SmartDry Telemetry Simulator (Target: {BACKEND_URL}, Interval: {INTERVAL_SECONDS}s)")
+def run_simulator(burst: Optional[int] = None, interval: Optional[float] = None):
+    step_interval = interval if interval is not None else INTERVAL_SECONDS
+    logger.info(
+        f"Starting BT-SmartDry Telemetry Simulator (Target: {BACKEND_URL}, Interval: {step_interval}s"
+        + (f", Burst: {burst} ticks" if burst else "")
+        + ")"
+    )
     sim = TelemetrySimulator(BACKEND_URL)
 
     # Initial connection loop
@@ -290,15 +295,24 @@ def run_simulator():
 
             sim.step_simulation()
             tick_counter += 1
+
+            if burst is not None and tick_counter >= burst:
+                logger.info(f"Burst run completed {tick_counter} ticks.")
+                break
         except Exception as e:
             logger.error(f"Unexpected error in simulator cycle: {e}")
 
-        time.sleep(INTERVAL_SECONDS)
+        time.sleep(step_interval)
 
     sim.client.close()
     logger.info("Simulator terminated cleanly.")
 
 
 if __name__ == "__main__":
-    run_simulator()
+    import argparse
+    parser = argparse.ArgumentParser(description="BT-SmartDry Telemetry Simulator")
+    parser.add_argument("--burst", type=int, default=None, help="Run for N ticks and exit")
+    parser.add_argument("--interval", type=float, default=None, help="Interval between ticks in seconds")
+    args = parser.parse_args()
+    run_simulator(burst=args.burst, interval=args.interval)
 

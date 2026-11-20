@@ -10,6 +10,7 @@ import { BatchDetailPage } from './pages/BatchDetailPage';
 import { BatchHistoryPage } from './pages/BatchHistoryPage';
 import { HubOverviewPage } from './pages/HubOverviewPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
+import { AlertsPage } from './pages/AlertsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,6 +62,14 @@ export const App: React.FC = () => {
                 element={
                   <Layout>
                     <BatchHistoryPage />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/alerts"
+                element={
+                  <Layout>
+                    <AlertsPage />
                   </Layout>
                 }
               />

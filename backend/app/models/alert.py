@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Uuid, UniqueConstraint
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Uuid, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -16,6 +16,7 @@ class Alert(Base):
     message = Column(Text, nullable=False)
     phone_number = Column(String(30), nullable=False)
     status = Column(String(20), nullable=False, default="sent")  # "sent" | "failed"
+    is_read = Column(Boolean, default=False, nullable=False)
     sent_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
     batch = relationship("Batch", back_populates="alerts")

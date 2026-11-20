@@ -45,6 +45,8 @@ export interface Batch {
   end_time?: string;
   final_quality_grade?: QualityGrade;
   created_by_user_id?: string;
+  avoided_loss_kg?: number;
+  avoided_loss_kes?: number;
 }
 
 export interface Reading {
@@ -67,6 +69,7 @@ export interface Alert {
   message: string;
   phone_number: string;
   status: string;
+  is_read?: boolean;
   sent_at: string;
 }
 

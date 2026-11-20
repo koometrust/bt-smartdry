@@ -93,9 +93,44 @@ Canonical record of all decisions made during the grilling session. Overrides `d
 
 ## Scope
 
-- **In:** working prototype, synthetic data only, 3 hubs, 3 crops, 2 roles, bilingual templates, SMS alerts, Render deployment.
-- **Out:** real sensor integration (simulated only), LLM, WhatsApp, edge inference, production security audit, carbon-credit registration, real personal data.
-- **Objective 6 (avoided-loss estimator):** not planned architecturally. If time permits at week 18, it's a simple dashboard card addition.
+- **In:** working prototype, synthetic data only, 3 hubs, 3 crops, 2 roles, bilingual templates, SMS alerts with multi-tier dispatch and dashboard audit view, avoided-loss estimator, on-demand simulator control, Render + Supabase cloud deployment, comprehension evaluation protocol.
+- **Out:** real sensor integration (simulated only), LLM, WhatsApp, edge inference, production security audit, formal third-party carbon-credit registration, real personal data.
+
+## Milestone 4 Decisions
+
+### Avoided-Post-Harvest-Loss Estimator (Objective 6)
+- **Formulation:**
+  $$\text{kg\_saved} = \text{initial\_weight\_kg} \times (\text{baseline\_loss\_rate} - \text{smartdry\_loss\_rate})$$
+  $$\text{kes\_saved} = \text{kg\_saved} \times \text{market\_price\_per\_kg} \times \text{grade\_multiplier}$$
+- **Baseline parameters:**
+  - Moringa: Open-sun 35% vs SmartDry 5%, KES 300/kg
+  - Prunus: Open-sun 30% vs SmartDry 4%, KES 450/kg
+  - Hibiscus: Open-sun 40% vs SmartDry 6%, KES 250/kg
+- **Quality grade multipliers:** Export = 1.0 (100%), Standard = 0.9 (90%), Downgraded = 0.5 (50%).
+- **Persistence:** Persisted on `batches` table (`avoided_loss_kg`, `avoided_loss_kes`) when an operator confirms completion.
+- **Presentation:** Rendered on Batch Detail and Batch History with explicit disclaimer: *"Indicative post-harvest metric; non-certified carbon or agronomic claim"*. Aggregated across crops and hubs on the Administrator Analytics page.
+
+### Alerts & Africa's Talking Integration
+- **Dispatch modes (`SMS_PROVIDER_MODE`):**
+  - `mock`: Logs SMS to DB and backend console without network calls (default for local dev and CI/CD).
+  - `sandbox`: Dispatches via Africa's Talking Sandbox API.
+  - `live`: Dispatches real SMS to configured phone numbers via Africa's Talking live API with KES 500 airtime budget.
+- **Dashboard Alert UI:**
+  - Dedicated `/alerts` audit page with filterable table (Hub, Alert Type, Date range).
+  - Header notification bell icon with real-time unread badge opening an Alert slide-out drawer.
+  - Built using shadcn UI components (Sheet, Table, Badge, Button).
+  - Polled every 30 seconds via React Query.
+
+### Cloud Deployment & On-Demand Telemetry (Objective 5)
+- **Target:** Render free tier (FastAPI Web Service + React Static Site) + Supabase (PostgreSQL).
+- **Alembic migrations:** Run automatically as a pre-deploy release command.
+- **On-demand simulator:** Controlled via authenticated endpoints `POST /api/v1/simulator/start` and `POST /api/v1/simulator/stop` (plus CLI runner) to prevent burning free-tier compute hours.
+
+### Comprehension Evaluation Protocol (Objective 4)
+- **Protocol:** `docs/evaluations/comprehension_test.md`.
+- **Battery:** 5 canonical batch scenarios (Normal Drying, Near-Completion, Completion, Overheating Anomaly, High Humidity Anomaly) across English and Kiswahili.
+- **Participants:** 5 testers (including native Kiswahili speakers and hub workers).
+- **Scoring:** 3-point rubric (Correct 1.0, Partially Correct 0.5, Incorrect 0.0) targeting $\ge 80\%$ mean accuracy.
 
 ## Kiswahili
 

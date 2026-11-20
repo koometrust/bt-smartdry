@@ -1,0 +1,64 @@
+# Render Blueprint for BT-SmartDry Cloud Deployment
+# Architecture: FastAPI Web Service (Backend) + React Vite Static Site (Frontend)
+# Database: Supabase PostgreSQL (Managed External DB)
+
+services:
+  # ==========================================
+  # Backend Web Service (FastAPI + Python 3.11)
+  # ==========================================
+  - type: web
+    name: bt-smartdry-backend
+    runtime: python
+    region: frankfurt  # or oregon / ohio
+    plan: free
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    preDeployCommand: alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false
+        # Connect to Supabase pooler: postgresql+asyncpg://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?ssl=require
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 1440
+      - key: CORS_ORIGINS
+        value: https://bt-smartdry-frontend.onrender.com
+      - key: SMS_PROVIDER_MODE
+        value: sandbox  # "mock" | "sandbox" | "live"
+      - key: AFRICASTALKING_USERNAME
+        sync: false
+      - key: AFRICASTALKING_API_KEY
+        sync: false
+      - key: AFRICASTALKING_SENDER_ID
+        value: BTSmartDry
+      - key: MAX_DRYER_CAPACITY_KG
+        value: 200.0
+
+  # ==========================================
+  # Frontend Static Site (React + Vite)
+  # ==========================================
+  - type: static
+    name: bt-smartdry-frontend
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://bt-smartdry-backend.onrender.com
+

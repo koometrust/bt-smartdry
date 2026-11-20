@@ -8,6 +8,7 @@
     "activeBatches": "Active Batches",
     "history": "Batch History",
     "hubOverview": "Hubs",
+    "alerts": "Alerts",
     "analytics": "Analytics",
     "login": "Login",
     "logout": "Logout",
@@ -134,7 +135,46 @@
     "batchCrop": "Batch / Crop",
     "harvestWeight": "Harvest Weight",
     "timesDuration": "Times & Duration",
-    "target": "Target: {{target}}%"
+    "target": "Target: {{target}}%",
+    "avoidedLoss": "Avoided Loss (Saved)"
+  },
+  "loss": {
+    "title": "Avoided Post-Harvest Loss",
+    "subtitle": "Quantified biomass and revenue preserved vs traditional open-air sun drying",
+    "biomassPreserved": "Biomass Preserved",
+    "economicValue": "Economic Value Preserved",
+    "indicativeDisclaimer": "Indicative post-harvest metric; non-certified carbon or agronomic claim",
+    "totalPreservedKg": "Total Avoided Loss",
+    "totalPreservedKes": "Total Economic Preservation",
+    "baselineComparison": "Preserved vs open-air drying baseline",
+    "preservationEfficiency": "Preservation Value"
+  },
+  "alerts": {
+    "title": "Alert Notifications & Audit Log",
+    "subtitle": "Historical and real-time operational alerts dispatched across drying hubs",
+    "recentAlerts": "Recent Alerts",
+    "unreadCount": "{{count}} unread",
+    "noAlerts": "No alerts recorded.",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "viewAll": "View all alerts",
+    "filterHub": "Filter by Hub",
+    "filterType": "Filter by Type",
+    "allTypes": "All Types",
+    "channel": "Channel",
+    "recipient": "Recipient Phone",
+    "timestamp": "Timestamp",
+    "status": "Status",
+    "message": "Message",
+    "type": "Alert Type",
+    "readStatus": "Read Status",
+    "unread": "Unread",
+    "read": "Read",
+    "types": {
+      "near_completion": "Near Completion",
+      "completion": "Completion",
+      "anomaly": "Anomaly"
+    }
   },
   "analytics": {
     "title": "System Analytics & Quality Performance",

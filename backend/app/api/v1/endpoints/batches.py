@@ -64,6 +64,7 @@ async def get_batch(
 
 
 @router.post("/{batch_id}/complete", response_model=BatchResponse)
+@router.patch("/{batch_id}/complete", response_model=BatchResponse)
 async def complete_batch_action(
     batch_id: UUID,
     db: AsyncSession = Depends(get_db),

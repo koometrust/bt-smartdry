@@ -2,17 +2,18 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, "feat/**" ]
   pull_request:
     branches: [ main ]
 
 jobs:
   backend-and-ml-tests:
+    name: Backend, ML & Simulator Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -25,16 +26,17 @@ jobs:
           pip install -r ml/requirements.txt
           pip install -r simulator/requirements.txt
 
-      - name: Run Backend, ML, and Simulator Tests
+      - name: Run Backend, ML, and Simulator Test Suites
         run: |
           pytest ml/tests/ backend/tests/ simulator/test_simulator.py -v
 
   frontend-check:
+    name: Frontend Typecheck, Tests & Bundle Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -44,12 +46,12 @@ jobs:
         run: |
           npm ci
 
-      - name: Run Frontend Tests
+      - name: Run Vitest Suite
         working-directory: frontend
         run: |
-          npm run test
+          npm run test -- --run
 
-      - name: Build Frontend Bundle
+      - name: Verify Production Bundle Compilation
         working-directory: frontend
         run: |
           npm run build

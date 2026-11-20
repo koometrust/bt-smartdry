@@ -157,6 +157,7 @@ export const BatchHistoryPage: React.FC = () => {
                 <TableHead>{t('history.timesDuration')}</TableHead>
                 <TableHead>Final Moisture</TableHead>
                 <TableHead>{t('history.finalGrade')}</TableHead>
+                <TableHead>{t('history.avoidedLoss')}</TableHead>
                 <TableHead className="text-right">Details</TableHead>
               </TableRow>
             </TableHeader>
@@ -221,6 +222,18 @@ export const BatchHistoryPage: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <PredictionBadge grade={finalGrade} size="sm" />
+                    </TableCell>
+                    <TableCell>
+                      {batch.avoided_loss_kg !== undefined && batch.avoided_loss_kg !== null ? (
+                        <div>
+                          <span className="font-semibold text-emerald-700">+{batch.avoided_loss_kg} kg</span>
+                          <span className="text-[11px] text-muted-foreground block">
+                            {batch.avoided_loss_kes?.toLocaleString()} KES
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button

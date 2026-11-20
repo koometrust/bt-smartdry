@@ -34,6 +34,7 @@ services:
       ACCESS_TOKEN_EXPIRE_MINUTES: 1440
       ENVIRONMENT: development
       CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      SMS_PROVIDER_MODE: mock
       AFRICASTALKING_USERNAME: sandbox
       AFRICASTALKING_API_KEY: dummy_key
     volumes:
