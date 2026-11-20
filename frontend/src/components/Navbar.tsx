@@ -15,7 +15,9 @@ import {
   Menu,
   X,
   User as UserIcon,
+  Bell,
 } from 'lucide-react';
+import { AlertsDrawer } from './AlertsDrawer';
 
 export const Navbar: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -42,6 +44,7 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { to: '/', label: t('nav.activeBatches'), icon: Layers },
     { to: '/history', label: t('nav.history'), icon: History },
+    { to: '/alerts', label: t('nav.alerts'), icon: Bell },
     ...(isAdmin
       ? [
           { to: '/hubs', label: t('nav.hubOverview'), icon: Building2 },
@@ -94,7 +97,10 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Right controls: Language toggle, User profile, Logout */}
-          <div className="hidden md:flex md:items-center md:space-x-4">
+          <div className="hidden md:flex md:items-center md:space-x-3">
+            {/* Notification Bell & Drawer */}
+            {user && <AlertsDrawer isAdmin={isAdmin} />}
+
             {/* Language Switcher */}
             <button
               onClick={toggleLanguage}
@@ -140,6 +146,7 @@ export const Navbar: React.FC = () => {
 
           {/* Mobile hamburger button */}
           <div className="flex items-center md:hidden space-x-2">
+            {user && <AlertsDrawer isAdmin={isAdmin} />}
             <button
               onClick={toggleLanguage}
               className="p-1.5 text-xs font-bold rounded border border-gray-300 bg-gray-50 text-gray-700"

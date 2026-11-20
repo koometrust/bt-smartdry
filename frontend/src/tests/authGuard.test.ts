@@ -55,6 +55,7 @@ describe('Authentication & Role Guards', () => {
   it('allows operators to access active batches and history, but blocks admin pages', () => {
     expect(canAccessRoute(operatorUser, '/').allowed).toBe(true);
     expect(canAccessRoute(operatorUser, '/history').allowed).toBe(true);
+    expect(canAccessRoute(operatorUser, '/alerts').allowed).toBe(true);
     expect(canAccessRoute(operatorUser, '/batches/123').allowed).toBe(true);
 
     // Blocked routes
@@ -65,6 +66,7 @@ describe('Authentication & Role Guards', () => {
   it('allows administrators to access all pages including hubs and analytics', () => {
     expect(canAccessRoute(adminUser, '/').allowed).toBe(true);
     expect(canAccessRoute(adminUser, '/history').allowed).toBe(true);
+    expect(canAccessRoute(adminUser, '/alerts').allowed).toBe(true);
     expect(canAccessRoute(adminUser, '/batches/123').allowed).toBe(true);
     expect(canAccessRoute(adminUser, '/hubs').allowed).toBe(true);
     expect(canAccessRoute(adminUser, '/analytics').allowed).toBe(true);
