@@ -53,6 +53,10 @@ class BatchResponse(BaseModel):
     predicted_quality_grade: Optional[QualityGrade] = None
     latest_advisory: Optional[str] = None
     
+    # Avoided post-harvest loss metrics
+    avoided_loss_kg: Optional[float] = None
+    avoided_loss_kes: Optional[float] = None
+    
     created_at: datetime
     updated_at: datetime
 

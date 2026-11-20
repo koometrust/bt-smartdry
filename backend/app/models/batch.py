@@ -23,6 +23,10 @@ class Batch(Base):
     predicted_remaining_hours = Column(Float, nullable=True)
     predicted_quality_grade = Column(String(20), nullable=True)  # "export" | "standard" | "downgraded"
     latest_advisory = Column(String(500), nullable=True)
+
+    # Avoided post-harvest loss metrics (persisted upon completion)
+    avoided_loss_kg = Column(Float, nullable=True)
+    avoided_loss_kes = Column(Float, nullable=True)
     
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
