@@ -8,6 +8,7 @@
     "activeBatches": "Mizigo Inayokaushwa",
     "history": "Historia ya Mizigo",
     "hubOverview": "Vituo vya Kukausha",
+    "alerts": "Tahadhari",
     "analytics": "Takwimu",
     "login": "Ingia",
     "logout": "Toka",
@@ -134,7 +135,46 @@
     "batchCrop": "Mzigo / Zao",
     "harvestWeight": "Uzito wa Mavuno",
     "timesDuration": "Nyakati na Muda",
-    "target": "Lengo: {{target}}%"
+    "target": "Lengo: {{target}}%",
+    "avoidedLoss": "Upotevu Ulioepukwa"
+  },
+  "loss": {
+    "title": "Kupunguza Upotevu Baada ya Mavuno",
+    "subtitle": "Kiasi cha mazao na mapato yaliyookolewa kulinganisha na ukaushaji wa jua wa wazi",
+    "biomassPreserved": "Kiasi Kilichookolewa",
+    "economicValue": "Thamani ya Kiuchumi Iliyookolewa",
+    "indicativeDisclaimer": "Kipimo cha makisio ya baada ya mavuno; si madai rasmi ya kaboni au kilimo",
+    "totalPreservedKg": "Jumla ya Upotevu Ulioepukwa",
+    "totalPreservedKes": "Jumla ya Thamani Iliyookolewa",
+    "baselineComparison": "Kulinganisha na ukaushaji wa kawaida",
+    "preservationEfficiency": "Thamani ya Uhifadhi"
+  },
+  "alerts": {
+    "title": "Kumbukumbu ya Tahadhari na Ukaguzi",
+    "subtitle": "Tahadhari za kihistoria na wakati halisi zilizotumwa katika vituo vya ukaushaji",
+    "recentAlerts": "Tahadhari za Hivi Karibuni",
+    "unreadCount": "{{count}} hazijasomwa",
+    "noAlerts": "Hakuna tahadhari zilizorekodiwa.",
+    "markRead": "Weka kama imesomwa",
+    "markAllRead": "Weka zote zimesomwa",
+    "viewAll": "Tazama tahadhari zote",
+    "filterHub": "Chuja kwa Kituo",
+    "filterType": "Chuja kwa Aina",
+    "allTypes": "Aina Zote",
+    "channel": "Njia",
+    "recipient": "Nambari ya Simu",
+    "timestamp": "Muda",
+    "status": "Hali",
+    "message": "Ujumbe",
+    "type": "Aina ya Tahadhari",
+    "readStatus": "Hali ya Kusomwa",
+    "unread": "Haijasomwa",
+    "read": "Imesomwa",
+    "types": {
+      "near_completion": "Karibu Kukamilika",
+      "completion": "Kukamilika",
+      "anomaly": "Hitilafu"
+    }
   },
   "analytics": {
     "title": "Takwimu za Mfumo na Ubora wa Mazao",

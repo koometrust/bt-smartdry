@@ -1,4 +1,4 @@
-import { Batch, CreateBatchDTO, Hub, Reading, TokenResponse, User } from '../types';
+import { Alert, Batch, CreateBatchDTO, Hub, Reading, TokenResponse, User } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -84,6 +84,54 @@ class ApiClient {
     return this.request<Batch>(`/api/v1/batches/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
+    });
+  }
+
+  async completeBatch(id: string): Promise<Batch> {
+    return this.request<Batch>(`/api/v1/batches/${id}/complete`, {
+      method: 'POST',
+    });
+  }
+
+  // Alerts
+  async getAlerts(params?: { hub_id?: string; alert_type?: string; limit?: number }): Promise<Alert[]> {
+    const sp = new URLSearchParams();
+    if (params?.hub_id) sp.append('hub_id', params.hub_id);
+    if (params?.alert_type) sp.append('alert_type', params.alert_type);
+    if (params?.limit) sp.append('limit', String(params.limit));
+    const qs = sp.toString() ? `?${sp.toString()}` : '';
+    return this.request<Alert[]>(`/api/v1/alerts/${qs}`);
+  }
+
+  async getUnreadAlertsCount(): Promise<{ unread_count: number }> {
+    return this.request<{ unread_count: number }>('/api/v1/alerts/unread-count');
+  }
+
+  async markAlertAsRead(id: string): Promise<Alert> {
+    return this.request<Alert>(`/api/v1/alerts/${id}/read`, {
+      method: 'POST',
+    });
+  }
+
+  // Analytics & Simulator
+  async getAnalyticsOverview(): Promise<any> {
+    return this.request<any>('/api/v1/analytics/overview');
+  }
+
+  async getSimulatorStatus(): Promise<any> {
+    return this.request<any>('/api/v1/simulator/status');
+  }
+
+  async startSimulator(params?: { interval_seconds?: number; speedup?: number }): Promise<any> {
+    return this.request<any>('/api/v1/simulator/start', {
+      method: 'POST',
+      body: JSON.stringify(params || {}),
+    });
+  }
+
+  async stopSimulator(): Promise<any> {
+    return this.request<any>('/api/v1/simulator/stop', {
+      method: 'POST',
     });
   }
 

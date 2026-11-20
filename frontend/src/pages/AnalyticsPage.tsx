@@ -20,6 +20,9 @@ import {
   Layers,
   PieChart,
   Building2,
+  ShieldCheck,
+  TrendingUp,
+  Info,
 } from 'lucide-react';
 
 export const AnalyticsPage: React.FC = () => {
@@ -37,10 +40,23 @@ export const AnalyticsPage: React.FC = () => {
     queryFn: () => api.getBatches(),
   });
 
+  // Load network-wide analytics overview
+  const { data: analyticsOverview } = useQuery({
+    queryKey: ['analytics', 'overview'],
+    queryFn: () => api.getAnalyticsOverview(),
+  });
+
   // Calculate Metrics
   const totalBatches = allBatches.length;
   const completedBatches = allBatches.filter((b) => b.status === 'completed');
   const totalWeightKg = allBatches.reduce((acc, b) => acc + (b.initial_weight_kg || 0), 0);
+
+  const totalAvoidedLossKg =
+    analyticsOverview?.total_avoided_loss_kg ??
+    completedBatches.reduce((acc, b) => acc + (b.avoided_loss_kg || 0), 0);
+  const totalAvoidedLossKes =
+    analyticsOverview?.total_avoided_loss_kes ??
+    completedBatches.reduce((acc, b) => acc + (b.avoided_loss_kes || 0), 0);
 
   // Quality grades breakdown
   let exportCount = 0;
@@ -169,6 +185,48 @@ export const AnalyticsPage: React.FC = () => {
                 </div>
                 <p className="mt-3 text-3xl font-black text-foreground">200 kg</p>
                 <p className="mt-1 text-xs text-muted-foreground">{t('analytics.perDryer')}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Avoided Post-Harvest Loss Summary (Objective 6) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="border-emerald-200 bg-emerald-50/30">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">
+                    {t('loss.totalPreservedKg')}
+                  </span>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="mt-3 text-3xl font-black text-emerald-700">
+                  +{totalAvoidedLossKg.toLocaleString()} kg
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t('loss.baselineComparison')}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-emerald-200 bg-emerald-50/30">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">
+                    {t('loss.totalPreservedKes')}
+                  </span>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="mt-3 text-3xl font-black text-emerald-700">
+                  {totalAvoidedLossKes.toLocaleString()} KES
+                </p>
+                <div className="mt-1 flex items-center text-[11px] text-muted-foreground italic">
+                  <Info className="w-3 h-3 mr-1 text-emerald-600 flex-shrink-0" />
+                  <span>{t('loss.indicativeDisclaimer')}</span>
+                </div>
               </CardContent>
             </Card>
           </div>

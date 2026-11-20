@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { api } from '../api/client';
@@ -15,11 +15,12 @@ import {
   CheckCircle,
   Thermometer,
   RefreshCw,
+  ShieldCheck,
+  Info,
 } from 'lucide-react';
 
 export const BatchDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -48,11 +49,10 @@ export const BatchDetailPage: React.FC = () => {
 
   // Complete batch mutation
   const completeMutation = useMutation({
-    mutationFn: () => api.updateBatch(id, { status: 'completed' }),
+    mutationFn: () => api.completeBatch(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['batch', id] });
       queryClient.invalidateQueries({ queryKey: ['batches'] });
-      navigate('/');
     },
   });
 
@@ -197,6 +197,60 @@ export const BatchDetailPage: React.FC = () => {
 
       {/* Live Telemetry Chart */}
       <SensorChart readings={readings} targetMoisturePct={batch.target_moisture_pct} />
+
+      {/* Avoided Post-Harvest Loss Card (for completed batches) */}
+      {batch.status === 'completed' && (
+        <Card className="border-emerald-200 bg-emerald-50/40">
+          <CardHeader className="p-5 pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-bold text-emerald-950 flex items-center">
+                <ShieldCheck className="w-5 h-5 mr-2 text-emerald-600" />
+                {t('loss.title')}
+              </CardTitle>
+              <Badge variant="outline" className="border-emerald-300 text-emerald-800 bg-emerald-100/60 text-xs">
+                {t('loss.baselineComparison')}
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('loss.subtitle')}
+            </p>
+          </CardHeader>
+          <CardContent className="p-5 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 bg-white rounded-lg border border-emerald-100 shadow-sm">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+                  {t('loss.biomassPreserved')}
+                </span>
+                <p className="text-3xl font-black text-emerald-700 mt-1">
+                  +{batch.avoided_loss_kg !== undefined && batch.avoided_loss_kg !== null
+                    ? batch.avoided_loss_kg
+                    : (batch.initial_weight_kg * 0.3).toFixed(1)} kg
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Controlled solar greenhouse vs traditional open-sun loss
+                </p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border border-emerald-100 shadow-sm">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+                  {t('loss.economicValue')}
+                </span>
+                <p className="text-3xl font-black text-emerald-700 mt-1">
+                  {batch.avoided_loss_kes !== undefined && batch.avoided_loss_kes !== null
+                    ? `${batch.avoided_loss_kes.toLocaleString()} KES`
+                    : `${Math.round(batch.initial_weight_kg * 0.3 * 300 * 0.9).toLocaleString()} KES`}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Factoring {batch.predicted_quality_grade || 'standard'} grade quality premium
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center text-xs text-muted-foreground italic border-t border-emerald-100 pt-2">
+              <Info className="w-3.5 h-3.5 mr-1.5 flex-shrink-0 text-emerald-600" />
+              <span>{t('loss.indicativeDisclaimer')}</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Latest Sensor Snapshot Card */}
       {latestReading && (
