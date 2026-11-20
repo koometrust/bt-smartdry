@@ -36,19 +36,30 @@ async def trigger_alert_if_needed(
         if user and user.phone_number:
             recipient_phone = user.phone_number
 
-    # 3. Send SMS via Africa's Talking
+    # 3. Send SMS based on SMS_PROVIDER_MODE (mock, sandbox, live)
+    mode = getattr(settings, "SMS_PROVIDER_MODE", "mock").lower()
     sms_status = AlertStatus.SENT
     try:
-        if settings.AFRICASTALKING_API_KEY and settings.AFRICASTALKING_API_KEY != "dummy_key":
+        if mode == "mock":
+            logger.info(f"[SMS MOCK DISPATCH] To: {recipient_phone} | Msg: {message}")
+        elif mode == "sandbox":
+            import africastalking
+            username = settings.AFRICASTALKING_USERNAME or "sandbox"
+            africastalking.initialize(username, settings.AFRICASTALKING_API_KEY)
+            sms = africastalking.SMS
+            sms.send(message, [recipient_phone], settings.AFRICASTALKING_SENDER_ID)
+            logger.info(f"[SMS SANDBOX DISPATCH] To: {recipient_phone} | Msg: {message}")
+        elif mode == "live":
             import africastalking
             africastalking.initialize(settings.AFRICASTALKING_USERNAME, settings.AFRICASTALKING_API_KEY)
             sms = africastalking.SMS
             sms.send(message, [recipient_phone], settings.AFRICASTALKING_SENDER_ID)
-            logger.info(f"SMS alert sent to {recipient_phone} for batch {batch.id}")
+            logger.info(f"[SMS LIVE DISPATCH] To: {recipient_phone} | Msg: {message}")
         else:
-            logger.info(f"[SMS SANDBOX MOCK] To: {recipient_phone} | Msg: {message}")
+            logger.warning(f"Unknown SMS_PROVIDER_MODE '{mode}', falling back to mock")
+            logger.info(f"[SMS MOCK DISPATCH] To: {recipient_phone} | Msg: {message}")
     except Exception as e:
-        logger.warning(f"Failed to dispatch SMS via Africa's Talking: {e}")
+        logger.warning(f"Failed to dispatch SMS via Africa's Talking ({mode}): {e}")
         sms_status = AlertStatus.FAILED
 
     # 4. Save alert record
@@ -59,6 +70,7 @@ async def trigger_alert_if_needed(
         message=message,
         phone_number=recipient_phone,
         status=sms_status.value,
+        is_read=False,
         sent_at=datetime.now(timezone.utc)
     )
     db.add(alert)

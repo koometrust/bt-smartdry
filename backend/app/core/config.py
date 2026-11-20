@@ -31,7 +31,8 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
     
-    # Africa's Talking
+    # Africa's Talking & Alerts Dispatch
+    SMS_PROVIDER_MODE: str = "mock"  # "mock" | "sandbox" | "live"
     AFRICASTALKING_USERNAME: str = "sandbox"
     AFRICASTALKING_API_KEY: str = "dummy_key"
     AFRICASTALKING_SENDER_ID: str = "BTSmartDry"

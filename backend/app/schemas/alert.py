@@ -37,6 +37,7 @@ class AlertResponse(BaseModel):
     message: str
     phone_number: str
     status: AlertStatus
+    is_read: bool = False
     sent_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
