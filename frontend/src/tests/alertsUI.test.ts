@@ -59,3 +59,4 @@ describe('Alerts UI & Bilingual Parity', () => {
     expect(anomalyAlerts[0].id).toBe('a2');
   });
 });
+

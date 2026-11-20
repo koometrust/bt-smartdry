@@ -145,3 +145,4 @@ The empirical result of **94.0% comprehension** satisfies Objective 4 of the BT-
 1. Low-cost SMS and visual alerts bridge literacy and technical comprehension barriers for rural operators.
 2. The standardized bilingual template vocabulary in `locales/en.json` and `locales/sw.json` conveys actionable instructions without ambiguity.
 3. Rapid operator response times ensure that the 30%–40% post-harvest loss typical in sun drying is mitigated effectively in smallholder community hubs.
+

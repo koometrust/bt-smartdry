@@ -16,7 +16,10 @@ async def lifespan(app: FastAPI):
     ml_service = get_ml_service()
     ml_service.load_models()
     yield
-    # Shutdown
+    # Shutdown: Halt background simulator if active
+    from app.services.simulator_service import simulator_manager
+    if simulator_manager.is_running:
+        await simulator_manager.stop()
 
 
 app = FastAPI(

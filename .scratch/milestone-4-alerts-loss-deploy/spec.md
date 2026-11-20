@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: resolved
 
 # Milestone 4 Spec: Alerts Hardening, Avoided-Loss Estimator, Cloud Deployment, and Comprehension Protocol
 
