@@ -48,3 +48,7 @@ _Avoid_: run, session, process
 When dried crop remains in the dryer past its optimal moisture target, degrading quality grade.
 _Avoid_: burning, spoiling
 
+**Avoided Loss**:
+The estimated quantity (kg) and indicative economic value (KES) of crop preserved from post-harvest spoilage by controlled smart solar drying compared to traditional open-air sun drying.
+_Avoid_: carbon credit, saved yield, salvage, crop offset
+
