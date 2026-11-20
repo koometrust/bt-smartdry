@@ -11,6 +11,7 @@ from app.core.database import Base, get_db
 from app.core.security import get_password_hash
 from app.models.hub import Hub
 from app.models.user import User
+from app.services.simulator_service import simulator_manager
 
 TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -26,9 +27,12 @@ TestingSessionLocal = async_sessionmaker(
 
 @pytest_asyncio.fixture(autouse=True)
 async def setup_db():
+    simulator_manager.session_factory = TestingSessionLocal
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    if simulator_manager.is_running:
+        await simulator_manager.stop()
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
